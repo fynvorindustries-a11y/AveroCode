@@ -1,0 +1,333 @@
+/* ============================================================================
+   Avero Launcher — pages.css  (per-page styles; loaded after tokens, components and shell)
+   Every colour/size comes from tokens.css. Shared page pieces first, then one block per page.
+   ============================================================================ */
+
+/* ── Shared page chrome ───────────────────────────────────────────────── */
+.av-page-body { -fx-padding: 16 28 32 28; }
+
+.av-section-title { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-text-mute; }
+
+/* Underline tabs (News/Changes now; Play and others reuse them) */
+.av-tabs { -fx-border-color: transparent transparent -av-line transparent; -fx-border-width: 0 0 1 0; }
+.av-tab {
+    -fx-background-color: transparent; -fx-background-radius: 0; -fx-background-insets: 0;
+    -fx-padding: 8 16 9 16; -fx-cursor: hand;
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px;
+    -fx-text-fill: -av-text-dim;
+    -fx-border-color: transparent transparent transparent transparent; -fx-border-width: 0 0 2 0;
+}
+.av-tab:hover    { -fx-text-fill: -av-text; }
+.av-tab:selected { -fx-text-fill: -av-text; -fx-border-color: transparent transparent -av-accent transparent; }
+.root:kbd .av-tab:focused { -fx-background-color: -av-bg-3; }
+
+/* Small status chip (e.g. LATEST, PARTNER) */
+.av-chip       { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-dim;
+                 -fx-background-color: -av-line; -fx-padding: 3 8 3 8; }
+.av-chip-accent { -fx-text-fill: #ffffff; -fx-background-color: -av-accent; }
+
+/* Cape tile (kit.CapePreview): opaque so nothing behind it shows through */
+.av-cape-preview { -fx-background-color: -av-line-2, -av-bg-0; -fx-background-insets: 0, 1; }
+.av-cape-stage   { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.65), 22, 0.1, 0, 10); }
+/* light rim on the left, shadow toward the right edge and the hem */
+.av-cape-shade {
+    -fx-background-color:
+        linear-gradient(to right, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.00) 16%, rgba(0,0,0,0.00) 78%, rgba(0,0,0,0.30) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.00) 55%, rgba(0,0,0,0.38) 100%);
+}
+.av-cape-collar { -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.0)); }
+.av-cape-glyph { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-mute; }
+.av-cape-glyph-initial { -fx-font-family: "Avero Display"; -fx-font-size: 84px; -fx-text-fill: rgba(236,232,225,0.22); }
+
+/* ── Home ─────────────────────────────────────────────────────────────── */
+.home-hero       { -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; }
+.home-hero-base  { -fx-background-color: linear-gradient(to bottom right, -av-bg-2 0%, -av-bg-0 100%); }
+.home-hero-photo { -fx-opacity: 0.95; }
+/* drifting light (Motion.drift moves it very slowly) */
+.home-hero-light { -fx-background-color: radial-gradient(center 30% 50%, radius 60%, -av-accent-soft 0%, transparent 100%); }
+/* legibility scrim: same navy as -av-bg-0 (#070d17); gradient stops can't take alpha from a looked-up colour */
+.home-hero-scrim { -fx-background-color: linear-gradient(to right, rgba(7,13,23,0.80) 0%, rgba(7,13,23,0.38) 50%, rgba(7,13,23,0.0) 100%); }
+
+.home-hero-content { -fx-padding: 22 40 22 44; }
+/* Hero cape card (same language as the Play stage card) */
+.home-hero-card { -fx-background-color: -av-bg-2; -fx-border-color: -av-text transparent transparent transparent; -fx-border-width: 3 0 0 0; -fx-padding: 14 16 34 16; }
+.home-hero-chip { -fx-background-color: -av-bg-0; }
+.home-eyebrow   { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-accent; }
+.home-hero-name { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 60px; -fx-text-fill: -av-text; }
+.home-hero-sub  { -fx-font-family: "Barlow"; -fx-font-size: 14px; -fx-text-fill: -av-text-dim; }
+
+.home-play-glow { -fx-background-color: radial-gradient(center 50% 50%, radius 58%, -av-accent-glow 0%, transparent 100%); }
+.home-play      { -fx-min-width: 230; -fx-pref-width: 230; -fx-min-height: 70; -fx-pref-height: 70; -fx-font-size: 28px; -fx-padding: 0; }
+.home-cta       { -fx-min-width: 230; -fx-min-height: 56; -fx-font-size: 16px; }
+
+.home-field-label { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+.home-version-select {
+    -fx-background-color: -av-line-2, -av-bg-3; -fx-background-insets: 0, 1; -fx-background-radius: 0;
+    -fx-min-width: 190; -fx-pref-width: 190; -fx-pref-height: 44; -fx-cursor: hand;
+}
+.home-version-select:hover { -fx-background-color: -av-line-hot, -av-bg-3; }
+.home-version-select .list-cell { -fx-background-color: transparent; -fx-text-fill: -av-text; -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-padding: 0 0 0 12; }
+.home-version-select .arrow-button { -fx-background-color: transparent; }
+.home-version-select .arrow { -fx-background-color: -av-text-dim; }
+
+.home-cape-name { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: -av-text; }
+
+/* quick cards */
+.home-quick-kicker { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-accent; }
+.home-quick-title  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-text; }
+.home-quick-hint   { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.home-quick-arrow  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-text-mute; }
+.home-quick:hover .home-quick-arrow { -fx-text-fill: -av-accent; }
+.root:kbd .home-quick:focused > .av-card { -fx-background-color: -av-text, -av-bg-3; -fx-background-insets: 0, 1; }
+
+/* what's new */
+.home-row        { -fx-padding: 12 4 12 4; -fx-border-color: transparent transparent -av-line transparent; -fx-border-width: 0 0 1 0; }
+.home-row-title  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: -av-text; }
+.home-row-desc   { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.home-row-mark   { -fx-background-color: -av-accent; }
+.home-row-mark-dim { -fx-background-color: -av-line-2; }
+
+/* partners */
+.home-partner-body { -fx-padding: 38 22 22 22; }
+.home-partner-name { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 24px; -fx-text-fill: -av-text; }
+.home-partner-desc { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.home-partner-ip   { -fx-font-family: "Consolas", "Courier New", monospace; -fx-font-size: 13px; -fx-text-fill: -av-text;
+                     -fx-background-color: -av-line, -av-bg-0; -fx-background-insets: 0, 1; -fx-padding: 9 12 9 12; }
+
+/* Avero profile card banner — orange-to-red cover strip behind the avatar/name row */
+.avero-profile-banner {
+    -fx-background-color:
+        linear-gradient(to bottom right, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.00) 45%),
+        linear-gradient(to bottom right, #ffb347 0%, #ff7a3d 45%, #ff4655 80%, #c93a47 100%);
+}
+.avero-profile-banner-wrap { -fx-background-color: -av-bg-2; }
+
+.home-banner-host   { -fx-background-color:
+                        linear-gradient(to bottom right, rgba(143,208,255,0.42) 0%, rgba(143,208,255,0.06) 60%, rgba(143,208,255,0.00) 100%),
+                        linear-gradient(to bottom right, -av-bg-3 0%, -av-bg-0 100%); }
+.home-banner-server { -fx-background-color:
+                        linear-gradient(to bottom right, rgba(255,70,85,0.38) 0%, rgba(255,70,85,0.05) 60%, rgba(255,70,85,0.00) 100%),
+                        linear-gradient(to bottom right, -av-bg-3 0%, -av-bg-0 100%); }
+/* fades the art into the card body so the logo tile and text sit on a calm surface */
+.home-banner-scrim  { -fx-background-color: linear-gradient(to bottom, rgba(7,13,23,0.05) 0%, rgba(7,13,23,0.35) 55%, rgba(15,25,35,1.0) 100%); }
+
+.home-logo-tile  { -fx-background-color: -av-line-hot, -av-bg-0; -fx-background-insets: 0, 1; }
+.home-logo-ice   { -fx-background-color: -av-ice, -av-bg-0; -fx-background-insets: 0, 1; }
+.home-logo-red   { -fx-background-color: -av-accent, -av-bg-0; -fx-background-insets: 0, 1; }
+.home-accent-ice { -fx-background-color: linear-gradient(to right, -av-ice 0%, transparent 100%); }
+.home-accent-red { -fx-background-color: linear-gradient(to right, -av-accent 0%, transparent 100%); }
+.home-partner-kicker { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; }
+.home-kicker-ice { -fx-text-fill: -av-ice; }
+.home-kicker-red { -fx-text-fill: -av-accent; }
+.home-logo-mono  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 36px; -fx-text-fill: -av-ice; }
+
+.home-rack       { -fx-background-color: -av-line-2, rgba(7,13,23,0.70); -fx-background-insets: 0, 1; -fx-padding: 0 10 0 10; }
+.home-rack-slot  { -fx-background-color: -av-line-2; }
+.home-led        { -fx-background-color: -av-ok; }
+.home-led-ice    { -fx-background-color: -av-ice; }
+
+/* ── Play ─────────────────────────────────────────────────────────────── */
+/* Launch stage: full-bleed art + scrim, a tall centre card, a left rail and a right column.
+   Composition inspired by the Riot client play screen; all art and shapes are ours. */
+.play-stage         { -fx-background-color: -av-line, -av-bg-0; -fx-background-insets: 0, 1; }
+.play-stage-art     { -fx-background-image: url("../images/about-hero.png"); -fx-background-size: cover; -fx-background-position: center center; -fx-background-repeat: no-repeat; -fx-opacity: 0.9; }
+/* rgba stops: gradients cannot take alpha from a looked-up colour (same base as -av-bg-0 / -av-bg-1) */
+.play-stage-scrim   { -fx-background-color: linear-gradient(to bottom, rgba(7,13,23,0.10) 0%, rgba(7,13,23,0.30) 55%, rgba(7,13,23,0.80) 100%); }
+.play-stage-content { -fx-padding: 24 28 84 28; }
+
+/* Centre card: opaque, bright top bar, chamfered V bottom (clip set in Java) */
+.play-card {
+    -fx-background-color: -av-bg-2;
+    -fx-border-color: -av-text transparent transparent transparent; -fx-border-width: 3 0 0 0;
+    -fx-padding: 16 22 40 22;
+}
+
+/* Left rail */
+.play-rail-tile  { -fx-background-image: url("../images/about-hero.png"); -fx-background-size: cover; -fx-background-position: center center; -fx-background-color: -av-bg-0; -fx-min-height: 96; -fx-pref-height: 96; -fx-max-height: 96; -fx-padding: 0; }
+/* rgba stops: legibility strip over the art (gradients cannot take alpha from a looked-up colour) */
+.play-rail-strip { -fx-padding: 22 10 8 10; -fx-background-color: linear-gradient(to top, rgba(7,13,23,0.94) 0%, rgba(7,13,23,0.0) 100%); }
+.play-rail-mode  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 20px; -fx-text-fill: -av-text; }
+.play-rail-sub   { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.play-rail-btn   {
+    -fx-background-color: -av-line-2, -av-bg-2; -fx-background-insets: 0, 0 0 0 3; -fx-background-radius: 0;
+    -fx-padding: 12 14 12 16; -fx-cursor: hand;
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-dim;
+}
+.play-rail-btn:hover    { -fx-background-color: -av-line-hot, -av-bg-3; -fx-text-fill: -av-text; }
+.play-rail-btn:selected { -fx-background-color: -av-accent, -av-bg-3; -fx-text-fill: -av-text; }
+.root:kbd .play-rail-btn:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* Ornamental silhouettes behind the card */
+.play-frame { -fx-background-color: -av-line-hot, -av-bg-2; -fx-background-insets: 0, 2 1 0 1; }
+.play-frame-far { -fx-background-color: -av-line-2, -av-bg-1; -fx-background-insets: 0, 2 1 0 1; }
+
+/* Fact rows under the picker */
+.play-facts     { -fx-border-color: -av-line transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 10 0 0 0; }
+.play-fact-key  { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+.play-fact-cell { -fx-padding: 0 0 0 0; }
+.play-fact-val  { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+
+/* Right column tiles (real summaries) */
+.play-side      { -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; -fx-padding: 14 16 14 16; }
+.play-side:hover { -fx-background-color: -av-line-hot, -av-bg-3; }
+.play-side-big  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-text; }
+.play-side-sub  { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.root:kbd .play-side:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+.play-eyebrow { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-accent; }
+.play-title   { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 30px; -fx-text-fill: -av-text; }
+.play-hint    { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.play-status  { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.play-count   { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+
+/* PLAY button + its pulsing glow (a radial gradient on its own node; Motion.pulse fades it) */
+.play-go      { -fx-min-width: 280; -fx-pref-width: 280; -fx-min-height: 54; -fx-pref-height: 54; -fx-font-size: 22px; -fx-padding: 0; }
+.play-go-glow { -fx-background-color: radial-gradient(center 50% 50%, radius 58%, -av-accent-glow 0%, transparent 100%); }
+
+/* Version picker (opaque, so banner slashes never show through) */
+.play-select {
+    -fx-background-color: -av-line-2, -av-bg-3; -fx-background-insets: 0, 1; -fx-background-radius: 0;
+    -fx-min-width: 0; -fx-pref-width: 260; -fx-pref-height: 44; -fx-cursor: hand;
+}
+.play-select:hover { -fx-background-color: -av-line-hot, -av-bg-3; }
+.play-select .list-cell { -fx-background-color: transparent; -fx-text-fill: -av-text; -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-padding: 0 0 0 12; }
+.play-select .arrow-button { -fx-background-color: transparent; }
+.play-select .arrow { -fx-background-color: -av-text-dim; }
+.root:kbd .play-select:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* Filter toggles (snapshots / modded / releases) */
+.play-filter {
+    -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; -fx-background-radius: 0;
+    -fx-padding: 12 14 12 14; -fx-cursor: hand;
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-dim;
+}
+.play-filter:hover    { -fx-background-color: -av-line-hot, -av-bg-3; -fx-text-fill: -av-text; }
+.play-filter:selected { -fx-background-color: -av-accent, -av-bg-3; -fx-text-fill: -av-text; }
+.play-filter:disabled { -fx-opacity: 0.5; }
+.root:kbd .play-filter:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* Inline notice (version list could not be fetched, local versions still playable) */
+.play-notice      { -fx-background-color: -av-bg-0; -fx-padding: 8 8 8 12; -fx-border-color: transparent transparent transparent -av-warn; -fx-border-width: 0 0 0 3; }
+.play-notice-text { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+
+/* Status chips (on top of .av-chip) */
+.play-chip-ok  { -fx-text-fill: -av-ok; }
+.play-chip-ice { -fx-text-fill: -av-ice; }
+.play-chip-err { -fx-text-fill: -av-err; }
+.play-chip-warn { -fx-text-fill: -av-warn; }
+
+/* Compact ghost button for rows and toolbars */
+.play-row-btn { -fx-padding: 7 14 7 14; -fx-font-size: 12px; }
+
+/* Game log */
+.play-log {
+    -fx-control-inner-background: -av-bg-0; -fx-background-color: -av-line, -av-bg-0; -fx-background-insets: 0, 1; -fx-background-radius: 0;
+    -fx-text-fill: -av-text-dim; -fx-font-family: "Consolas", "Courier New", monospace; -fx-font-size: 12px;
+    -fx-highlight-fill: -av-accent-soft; -fx-highlight-text-fill: -av-text;
+}
+.play-log .content { -fx-background-color: -av-bg-0; -fx-background-radius: 0; }
+
+/* Modpack cards */
+.play-pack-icon  { -fx-background-color: -av-line-2, -av-bg-0; -fx-background-insets: 0, 1; -fx-min-width: 44; -fx-pref-width: 44; -fx-max-width: 44; -fx-min-height: 44; -fx-pref-height: 44; -fx-max-height: 44; }
+.play-pack-glyph { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-accent; }
+.play-pack-name  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: -av-text; }
+.play-pack-meta  { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-mute; }
+.root:kbd .play-pack:focused > .av-card { -fx-background-color: -av-text, -av-bg-3; -fx-background-insets: 0, 1; }
+
+/* All versions list */
+.play-list { -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; -fx-background-radius: 0; -fx-padding: 1; }
+.play-list .list-cell { -fx-background-color: transparent; -fx-padding: 0; -fx-border-color: transparent transparent -av-line transparent; -fx-border-width: 0 0 1 0; }
+.play-list .list-cell:filled:hover    { -fx-background-color: -av-bg-3; }
+.play-list .list-cell:filled:selected { -fx-background-color: -av-bg-3; }
+.play-row    { -fx-padding: 8 14 8 14; }
+.play-row-id { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 17px; -fx-text-fill: -av-text; }
+
+/* Downloads list */
+.play-dl-scroll, .play-dl-scroll > .viewport { -fx-background-color: transparent; }
+.play-dl-row    { -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; -fx-padding: 11 14 11 14; }
+.play-dl-name   { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.play-dl-pct, .play-dl-status { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.play-dl-track  { -fx-background-color: -av-line-2; -fx-min-height: 4; -fx-pref-height: 4; -fx-max-height: 4; }
+.play-dl-fill   { -fx-background-color: -av-accent; }
+.play-dl-fill-wait { -fx-opacity: 0.35; }
+
+/* ── Store ────────────────────────────────────────────────────────────── */
+.store-notice      { -fx-background-color: -av-bg-0; -fx-padding: 10 14 10 14; -fx-border-color: transparent transparent transparent -av-warn; -fx-border-width: 0 0 0 3; }
+.store-notice-text { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.store-status      { -fx-background-color: -av-bg-2; -fx-padding: 10 14 10 14; -fx-border-color: transparent transparent transparent -av-ice; -fx-border-width: 0 0 0 3; -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+
+/* Featured stage: art + scrim + opaque preview card (same language as the Play stage) */
+.store-stage         { -fx-background-color: -av-line, -av-bg-0; -fx-background-insets: 0, 1; }
+.store-stage-art     { -fx-background-image: url("../images/about-hero.png"); -fx-background-size: cover; -fx-background-position: center center; -fx-background-repeat: no-repeat; -fx-opacity: 0.85; }
+/* rgba stops: gradients cannot take alpha from a looked-up colour (same base as -av-bg-0) */
+.store-stage-scrim   { -fx-background-color: linear-gradient(to right, rgba(7,13,23,0.92) 0%, rgba(7,13,23,0.82) 55%, rgba(7,13,23,0.50) 100%); }
+.store-stage-content { -fx-padding: 28 32 28 32; }
+.store-feature-card  { -fx-background-color: -av-bg-2; -fx-border-color: -av-text transparent transparent transparent; -fx-border-width: 3 0 0 0; -fx-padding: 12 12 34 12; }
+.store-feature-name  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 40px; -fx-text-fill: -av-text; }
+.store-feature-desc  { -fx-font-family: "Barlow"; -fx-font-size: 14px; -fx-text-fill: -av-text-dim; }
+
+/* Chips (on top of .av-chip) */
+.store-chip-ok    { -fx-text-fill: -av-ok; }
+.store-chip-ice   { -fx-text-fill: -av-ice; }
+.store-chip-warn  { -fx-text-fill: -av-warn; }
+.store-chip-mute  { -fx-text-fill: -av-text-mute; }
+.store-chip-price { -fx-text-fill: -av-text; }
+
+/* Gallery tiles */
+.store-tile-body { -fx-padding: 10 12 12 12; }
+.store-tile-name { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: -av-text; }
+.root:kbd .store-tile:focused > .av-card { -fx-background-color: -av-text, -av-bg-3; -fx-background-insets: 0, 1; }
+
+/* Side column */
+.store-side       { -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; -fx-padding: 16 16 16 16; }
+.store-side-big   { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 20px; -fx-text-fill: -av-text; }
+.store-side-sub   { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.store-side-label { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.store-field {
+    -fx-background-color: -av-line-2, -av-bg-3; -fx-background-insets: 0, 1; -fx-background-radius: 0;
+    -fx-text-fill: -av-text; -fx-prompt-text-fill: -av-text-mute; -fx-font-family: "Barlow"; -fx-font-size: 14px;
+    -fx-padding: 11 12 11 12; -fx-highlight-fill: -av-accent-soft; -fx-highlight-text-fill: -av-text;
+}
+.store-field:focused  { -fx-background-color: -av-accent, -av-bg-3; }
+.store-field:disabled { -fx-opacity: 0.5; }
+.store-switch {
+    -fx-background-color: -av-line, -av-bg-3; -fx-background-insets: 0, 1; -fx-background-radius: 0;
+    -fx-min-width: 56; -fx-padding: 8 0 8 0; -fx-cursor: hand;
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-dim;
+}
+.store-switch:hover    { -fx-background-color: -av-line-hot, -av-bg-3; }
+.store-switch:selected { -fx-background-color: -av-accent, -av-bg-3; -fx-text-fill: -av-text; }
+.root:kbd .store-switch:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* Leaderboard (Accounts page) */
+.av-lb-row { -fx-background-color: -av-bg-3; -fx-padding: 8 14 8 14; -fx-border-color: transparent transparent -av-line transparent; -fx-border-width: 0 0 1 0; }
+.av-lb-row-me { -fx-background-color: rgba(255,70,85,0.12); }
+.av-lb-place { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: -av-text-dim; -fx-min-width: 40; }
+.av-lb-place-top { -fx-text-fill: -av-accent; }
+.av-lb-name { -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.av-lb-sub { -fx-font-size: 11px; -fx-text-fill: -av-text-dim; }
+.av-lb-ap { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.av-lb-live { -fx-font-size: 10px; -fx-text-fill: -av-text-dim; }
+.av-lb-place-gold   { -fx-text-fill: #f5c542; }
+.av-lb-place-silver { -fx-text-fill: #cfd6e0; }
+.av-lb-place-bronze { -fx-text-fill: #d08a54; }
+.av-lb-icon-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: -av-line;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+}
+.av-lb-icon-btn:hover, .av-lb-icon-btn:focused { -fx-border-color: -av-line-hot; -fx-background-color: -av-bg-3; }
+.av-lb-icon-btn:armed { -fx-background-color: -av-bg-4; }
+.av-lb-icon { -fx-fill: transparent; -fx-stroke: -av-text-dim; -fx-stroke-width: 1.8; -fx-stroke-line-cap: round; -fx-stroke-line-join: round; }
+.av-lb-icon-btn:hover .av-lb-icon, .av-lb-icon-btn:focused .av-lb-icon { -fx-stroke: -av-text; }
+.av-lb-limit-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: -av-line;
+    -fx-border-width: 1;
+    -fx-padding: 4 9 4 9;
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-dim;
+    -fx-cursor: hand;
+}
+.av-lb-limit-btn:hover, .av-lb-limit-btn:focused { -fx-border-color: -av-line-hot; -fx-text-fill: -av-text; }

@@ -1,0 +1,116 @@
+/* ============================================================================
+   Avero Launcher — tokens.css  (design system, part 1 of 2)
+   The single place where the look is defined. Components (components.css) and pages only ever
+   reference these names, never raw hex values.
+
+   JavaFX CSS can only "look up" colors, so:
+     • colors .......... looked-up colors below (-av-*)
+     • spacing ......... utility classes  .pad-N  .gap-N        (4 / 8 / 12 / 16 / 24 / 32)
+     • type scale ...... utility classes  .t-display .t-h1 .t-h2 .t-h3 .t-body .t-small .t-label
+     • shadows ......... utility classes  .shadow-1 .shadow-2 .shadow-3 .glow-accent
+     • radius .......... the chamfer: cut sizes are in ValShape (6 / 9 / 12 / 16 px), not CSS
+     • motion .......... Motion.java (one easing, 90 / 140 / 240 / 300 ms)
+   Rule of thumb: red (-av-accent) is for the ONE primary action per screen and the active nav item.
+   ============================================================================ */
+
+.root {
+    /* Surfaces, darkest → lightest */
+    -av-bg-0:  #070d17;   /* sidebar, top bar */
+    -av-bg-1:  #0b1118;   /* app base */
+    -av-bg-2:  #0f1923;   /* panels / cards */
+    -av-bg-3:  #152231;   /* raised: hovered cards, inputs */
+    -av-bg-4:  #1d2d41;   /* pressed / selected raised */
+
+    /* Lines */
+    -av-line:      rgba(236,232,225,0.09);
+    -av-line-2:    rgba(236,232,225,0.16);
+    -av-line-hot:  rgba(236,232,225,0.34);
+
+    /* Text */
+    -av-text:      #ece8e1;
+    -av-text-dim:  rgba(236,232,225,0.64);
+    -av-text-mute: rgba(236,232,225,0.40);
+
+    /* Accent (red): primary action + active state only */
+    -av-accent:       #ff4655;
+    -av-accent-hot:   #ff6573;
+    -av-accent-press: #c93a47;
+    -av-accent-soft:  rgba(255,70,85,0.14);
+    -av-accent-glow:  rgba(255,70,85,0.45);
+
+    /* Secondary (ice, from the logo): info, secondary glow, cape previews */
+    -av-ice:       #8fd0ff;
+    -av-ice-soft:  rgba(143,208,255,0.14);
+
+    /* Status */
+    -av-ok:   #5ec97a;
+    -av-warn: #e0a030;
+    -av-err:  #e05a50;
+
+    /* Overlays */
+    -av-scrim: rgba(4,8,14,0.55);
+
+    /* ── Minecraft layer (mc-theme.css) ───────────────────────────────────────────────
+       Minecraft widgets are built from flat colour bands: a black outline, a light top-left
+       edge, a dark bottom-right edge, then the face. These tokens are those bands.        */
+    -mc-ink:        #05080e;   /* the 1px black outline every MC widget has */
+    -mc-cream:      #f1ece2;   /* hover / focus outline (MC's white) */
+
+    -mc-panel-hi:   #22344b;   /* raised panel: lit edge  */
+    -mc-panel-lo:   #04070c;   /* raised panel: shaded edge */
+    -mc-slot:       #0a1019;   /* inventory slot face */
+    -mc-slot-lo:    #03060b;   /* inventory slot: top-left shade */
+    -mc-slot-hi:    #26364b;   /* inventory slot: bottom-right light */
+
+    -mc-stone:      #363f4d;   /* deepslate button face */
+    -mc-stone-hi:   #68778d;
+    -mc-stone-lo:   #1a212b;
+    -mc-stone-hov:  #465367;
+    -mc-stone-hov-hi: #8696ae;
+    -mc-stone-press: #2a323e;
+
+    -mc-red:        #ff4655;   /* redstone */
+    -mc-red-hi:     #ffa0a8;
+    -mc-red-lo:     #94202c;
+    -mc-red-ink:    #2c060b;
+    -mc-red-hov:    #ff6573;
+    -mc-red-press:  #d83646;
+
+    -mc-xp:         #7cf23a;   /* experience-bar green */
+    -mc-xp-hi:      #d2ffa8;
+    -mc-xp-lo:      #3a8a14;
+}
+
+/* ── Type scale ───────────────────────────────────────────────────────── */
+.t-display { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 56px; -fx-text-fill: -av-text; }
+.t-h1      { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 36px; -fx-text-fill: -av-text; }
+.t-h2      { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 24px; -fx-text-fill: -av-text; }
+.t-h3      { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: -av-text; }
+.t-body    { -fx-font-family: "Barlow"; -fx-font-size: 14px; -fx-text-fill: -av-text; }
+.t-small   { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.t-label   { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-mute; }
+.t-dim     { -fx-text-fill: -av-text-dim; }
+.t-mute    { -fx-text-fill: -av-text-mute; }
+.t-accent  { -fx-text-fill: -av-accent; }
+
+/* ── Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 ─────────────────────────── */
+.pad-4  { -fx-padding: 4; }
+.pad-8  { -fx-padding: 8; }
+.pad-12 { -fx-padding: 12; }
+.pad-16 { -fx-padding: 16; }
+.pad-24 { -fx-padding: 24; }
+.pad-32 { -fx-padding: 32; }
+
+/* gap-N sets the spacing of VBox/HBox and the gaps of Flow/Tile/Grid panes (others ignore it) */
+.gap-4  { -fx-spacing: 4;  -fx-hgap: 4;  -fx-vgap: 4; }
+.gap-8  { -fx-spacing: 8;  -fx-hgap: 8;  -fx-vgap: 8; }
+.gap-12 { -fx-spacing: 12; -fx-hgap: 12; -fx-vgap: 12; }
+.gap-16 { -fx-spacing: 16; -fx-hgap: 16; -fx-vgap: 16; }
+.gap-24 { -fx-spacing: 24; -fx-hgap: 24; -fx-vgap: 24; }
+.gap-32 { -fx-spacing: 32; -fx-hgap: 32; -fx-vgap: 32; }
+
+/* ── Shadow scale (static effects only — never animate these) ─────────── */
+.shadow-1   { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.30), 8, 0, 0, 2); }
+.shadow-2   { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.40), 16, 0, 0, 6); }
+.shadow-3   { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.50), 28, 0, 0, 10); }
+.glow-accent { -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.45), 22, 0.1, 0, 0); }

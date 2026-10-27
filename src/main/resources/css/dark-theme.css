@@ -1,0 +1,2008 @@
+/* ============================================================================
+   Avero Launcher — dark-theme.css  (v2 — modernised & polished)
+   Design goals:
+     • Calm, premium dark-navy base — no neon, no excessive glow
+     • Subtle surface layers through controlled opacity, not bright gradients
+     • Clear typographic hierarchy with Montserrat
+     • Consistent spacing, radius, and border language across every page
+     • All the light-mode fallback fixes from v1 are preserved
+   ============================================================================ */
+
+/* ── Design tokens ───────────────────────────────────────────────────── */
+/* NOTE: the default font lives on .root, not on "*". A universal -fx-font-family beats every class
+   and inline font rule in JavaFX CSS (even Monocraft in mc-theme.css); on .root it is simply inherited. */
+.root, .app-root { -fx-font-family: "Barlow", "Segoe UI", sans-serif; }
+* {
+
+    /* Blues */
+    -accent:      #ff4655;
+    -accent-l:    #ff5d6b;
+    -accent-d:    #bd3944;
+    /* Orange CTA */
+    -cta:         #ff4655;
+    -cta-l:       #ff5d6b;
+    -cta-d:       #bd3944;
+    /* Backgrounds */
+    -bg-base:     #0b1118;
+    -bg-1:        #0f1923;
+    -bg-2:        #0f1e31;
+    -bg-3:        #142640;
+    /* Surfaces / panels */
+    -surface:     rgba(255,255,255,0.040);
+    -surface-2:   rgba(255,255,255,0.070);
+    -surface-3:   rgba(255,255,255,0.095);
+    /* Borders */
+    -border:      rgba(255,255,255,0.075);
+    -border-2:    rgba(255,255,255,0.130);
+    /* Text */
+    -text:        #ece8e1;
+    -text-dim:    rgba(236,232,225,0.60);
+    -text-mute:   rgba(236,232,225,0.38);
+    /* Status */
+    -ok:          #5ec97a;
+    -warn:        #e0a030;
+    -err:         #e05a50;
+}
+
+/* ── Root — override Modena internals so no white flash anywhere ───── */
+.root, .app-root {
+    -fx-base:                       #0b1118;
+    -fx-background:                 #0b1118;
+    -fx-control-inner-background:   #121e2a;
+    -fx-control-inner-background-alt: #121e2a;
+    -fx-text-background-color:      #ece8e1;
+    -fx-accent:                     #ff4655;
+    -fx-focus-color:                #ff4655;
+    -fx-faint-focus-color:          rgba(236,232,225,0.15);
+    -fx-selection-bar:              rgba(236,232,225,0.28);
+    -fx-selection-bar-non-focused:  rgba(236,232,225,0.14);
+
+    -fx-background-color: #0b1118;
+    -fx-text-fill: #ece8e1;
+}
+
+.label { -fx-text-fill: #ece8e1; }
+
+/* ── ScrollPane transparency (every page is wrapped) ─────────────────── */
+.scroll-pane, .scroll-pane .viewport, .scroll-pane .corner,
+.page-scroll, .page-scroll .viewport, .page-scroll .corner {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.page-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+.page-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(236,232,225,0.20);
+    -fx-background-radius: 0;
+}
+.page-scroll .scroll-bar:vertical .track { -fx-background-color: transparent; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ════════════════════════════════════════════════════════════════════════ */
+.sidebar {
+    -fx-background-color: #070d17;
+    -fx-border-color: transparent rgba(255,255,255,0.055) transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.brand-label {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+ 
+}
+.brand-sublabel {
+    -fx-text-fill: rgba(236,232,225,0.70);
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+ 
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(236,232,225,0.52);
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 0;
+    -fx-font-size: 12.5px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+.nav-button:hover {
+    -fx-background-color: rgba(255,255,255,0.055);
+    -fx-text-fill: rgba(236,232,225,0.88);
+}
+.nav-button:selected {
+    -fx-background-color: rgba(255,70,85,0.16);
+    -fx-text-fill: #ff5d6b;
+    -fx-font-weight: bold;
+}
+.nav-icon, .nav-icon-fill { -fx-fill: rgba(236,232,225,0.45); }
+.nav-button:selected .nav-icon,
+.nav-button:selected .nav-icon-fill { -fx-fill: #ff5d6b; }
+.nav-button:hover .nav-icon,
+.nav-button:hover .nav-icon-fill { -fx-fill: rgba(236,232,225,0.80); }
+
+.nav-indicator {
+    -fx-background-color: #ff4655;
+    -fx-background-radius: 0;
+}
+
+.sidebar-footer {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 14;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   TOP BAR & CONTENT AREA
+   ════════════════════════════════════════════════════════════════════════ */
+.top-bar {
+    -fx-background-color: rgba(7,13,23,0.82);
+    -fx-border-color: transparent transparent rgba(255,255,255,0.055) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 24 12 24;
+}
+.content-area { -fx-background-color: transparent; }
+.page { -fx-background-color: transparent; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY — page headings & section labels
+   ════════════════════════════════════════════════════════════════════════ */
+.page-title {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 23px;
+    -fx-font-weight: bold;
+ 
+}
+.page-subtitle {
+    -fx-text-fill: rgba(236,232,225,0.55);
+    -fx-font-size: 12.5px;
+    -fx-line-spacing: 2;
+}
+.title-accent { -fx-text-fill: #5da8d0; }
+.section-header {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+}
+.card-title {
+    -fx-text-fill: rgba(236,232,225,0.85);
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+ 
+}
+.feature-card-title {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.feature-card-desc {
+    -fx-text-fill: rgba(236,232,225,0.55);
+    -fx-font-size: 11.5px;
+    -fx-line-spacing: 1.5px;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   CARDS & PANELS
+   ════════════════════════════════════════════════════════════════════════ */
+.dashboard-card, .mod-card, .modpack-card, .partner-card, .recommended-card,
+.about-stat-card, .settings-section, .filters-panel {
+    -fx-background-color: rgba(15,30,49,0.85);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.075);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+
+}
+.mod-card:hover, .modpack-card:hover, .partner-card:hover, .recommended-card:hover,
+.dashboard-card:hover, .about-stat-card:hover {
+    -fx-border-color: rgba(236,232,225,0.22);
+    -fx-background-color: rgba(18,38,62,0.90);
+
+}
+.recommended-badge {
+    -fx-background-color: rgba(224,160,48,0.90);
+    -fx-text-fill: #0b1118;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 9.5px;
+ 
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   HERO BANNER
+   ════════════════════════════════════════════════════════════════════════ */
+.hero-banner {
+    -fx-background-color: #0a1826;
+    -fx-background-radius: 0;
+}
+.hero-eyebrow {
+    -fx-text-fill: #5da8d0;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+ 
+}
+.hero-greeting {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+.hero-hint { -fx-text-fill: rgba(236,232,225,0.65); -fx-font-size: 13px; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   BUTTONS
+   ════════════════════════════════════════════════════════════════════════ */
+/* Generic default button — looks like a calm ghost button */
+.button {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: #ece8e1;
+    -fx-background-radius: 0;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.09);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-font-weight: bold;
+}
+.button:hover {
+    -fx-background-color: rgba(255,255,255,0.09);
+    -fx-border-color: rgba(255,255,255,0.14);
+}
+.button:armed { -fx-background-color: rgba(255,255,255,0.12); }
+
+/* Outlined orange secondary */
+.secondary-button {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,70,85,0.50);
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-text-fill: #ff5d6b;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+    -fx-border-width: 1;
+}
+.secondary-button:hover {
+    -fx-background-color: rgba(255,70,85,0.10);
+    -fx-border-color: #ff4655;
+    -fx-text-fill: #ff5d6b;
+
+}
+.secondary-button:armed { -fx-background-color: rgba(255,70,85,0.18); }
+.secondary-button:disabled {
+    -fx-opacity: 1;
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(255,70,85,0.20);
+    -fx-text-fill: rgba(255,93,107,0.38);
+}
+
+/* Solid orange CTA */
+.primary-cta-button {
+    -fx-background-color: #ff4655;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+}
+.primary-cta-button:hover {
+    -fx-background-color: #ff5d6b;
+
+}
+.primary-cta-button:armed { -fx-background-color: #bd3944; }
+.primary-cta-button:disabled {
+    -fx-opacity: 1;
+    -fx-background-color: rgba(255,70,85,0.38);
+    -fx-text-fill: rgba(255,255,255,0.65);
+
+}
+
+/* Play / login big buttons */
+.login-button, .hero-play-button, .hero-setup-button, .hero-choose-version-button, .play-button {
+    -fx-background-color: #ff4655;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+
+    -fx-cursor: hand;
+}
+.login-button:hover, .hero-play-button:hover, .hero-setup-button:hover,
+.hero-choose-version-button:hover, .play-button:hover {
+    -fx-background-color: #ff5d6b;
+
+}
+.play-page-cta { -fx-padding: 16 32 16 28; -fx-background-radius: 0; }
+.play-page-cta:disabled { -fx-opacity: 0.38; }
+.play-button-arrow  { -fx-text-fill: #ffffff; -fx-font-size: 16px; }
+.play-button-label  { -fx-text-fill: #ffffff; -fx-font-size: 17px; -fx-font-weight: bold; }
+.play-button-divider { -fx-background-color: rgba(255,255,255,0.28); }
+.play-button-chevron { -fx-text-fill: rgba(255,255,255,0.60); -fx-font-size: 13px; }
+
+/* Tab bars — play, type, source */
+.play-tab-bar {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 0;
+    -fx-padding: 3;
+}
+.play-tab-button, .type-tab-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(236,232,225,0.55);
+    -fx-background-radius: 0;
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.play-tab-button:selected, .type-tab-button:selected {
+    -fx-background-color: #ff4655;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+.play-tab-button:hover, .type-tab-button:hover {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: rgba(236,232,225,0.88);
+}
+
+/* Source toggle (Modrinth / CurseForge) */
+.source-toggle-bar {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.06);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-padding: 4 8 4 4;
+}
+.source-toggle-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(236,232,225,0.55);
+    -fx-background-radius: 0;
+    -fx-padding: 7 18 7 18;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.source-toggle-button:hover {
+    -fx-background-color: rgba(255,255,255,0.055);
+    -fx-text-fill: #ece8e1;
+}
+.source-toggle-button:selected {
+    -fx-background-color: rgba(255,70,85,0.18);
+    -fx-border-color: rgba(255,70,85,0.40);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-text-fill: #ff5d6b;
+    -fx-font-weight: bold;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   INPUTS
+   ════════════════════════════════════════════════════════════════════════ */
+.combo-box, .text-field, .text-area, .search-field, .password-field {
+    -fx-background-color: rgba(255,255,255,0.055);
+    -fx-text-fill: #ece8e1;
+    -fx-prompt-text-fill: rgba(236,232,225,0.38);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.085);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-padding: 8 12 8 12;
+}
+.text-field:focused, .password-field:focused, .text-area:focused {
+    -fx-border-color: rgba(236,232,225,0.50);
+    -fx-background-color: rgba(255,255,255,0.075);
+}
+.check-box {
+    -fx-text-fill: rgba(236,232,225,0.75);
+}
+.check-box .box {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+.check-box:selected .box { -fx-background-color: #ff4655; -fx-border-color: #ff4655; }
+.check-box .mark { -fx-background-color: #ffffff; }
+.combo-box .list-cell, .combo-box-popup .list-view {
+    -fx-background-color: #121e2a;
+    -fx-text-fill: #ece8e1;
+}
+.list-cell:filled:hover   { -fx-background-color: rgba(236,232,225,0.13); }
+.list-cell:filled:selected { -fx-background-color: rgba(236,232,225,0.28); }
+.text-area .content { -fx-background-color: rgba(0,0,0,0.20); }
+.search-field-input { -fx-background-color: transparent; -fx-text-fill: #ece8e1; -fx-prompt-text-fill: rgba(236,232,225,0.35); -fx-border-width: 0; }
+.search-field-icon  { -fx-fill: rgba(236,232,225,0.42); }
+
+/* Progress bar */
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #ff4655, #ff5d6b);
+    -fx-background-radius: 0;
+}
+.progress-bar > .track {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 0;
+}
+
+/* Sliders */
+.slider .track {
+    -fx-background-color: rgba(255,255,255,0.09);
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-pref-height: 5;
+}
+.slider .thumb {
+    -fx-background-color: #ff4655;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-pref-width: 14;
+    -fx-pref-height: 14;
+
+}
+.slider .thumb:hover, .slider:focused .thumb { -fx-background-color: #ff5d6b; }
+.slider .axis { -fx-tick-label-fill: rgba(236,232,225,0.40); }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   STATUS CHIPS & PILLS
+   ════════════════════════════════════════════════════════════════════════ */
+.status-chip, .about-status-pill, .modpack-card-tag, .mod-tag, .partner-mode-badge {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 0;
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(236,232,225,0.72);
+    -fx-font-weight: bold;
+}
+.status-ok, .about-status-active {
+    -fx-background-color: rgba(94,201,122,0.14);
+    -fx-text-fill: #5ec97a;
+}
+.status-warn { -fx-background-color: rgba(224,160,48,0.14); -fx-text-fill: #e0a030; }
+.status-err  { -fx-background-color: rgba(224,90,80,0.14);  -fx-text-fill: #e05a50; }
+
+.status-chip-title {
+    -fx-text-fill: rgba(236,232,225,0.45);
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+ 
+}
+.status-chip-detail {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   ACCOUNT / AVATAR
+   ════════════════════════════════════════════════════════════════════════ */
+.account-chip {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-background-radius: 0;
+    -fx-padding: 6 12 6 8;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+.account-chip:hover {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-border-color: rgba(255,255,255,0.12);
+}
+.avatar-circle, .profile-avatar {
+    -fx-background-color: #1c2a38;
+    -fx-background-radius: 0;
+}
+.avatar-initial { -fx-text-fill: #ece8e1; -fx-font-weight: bold; -fx-font-size: 13px; }
+.account-name   { -fx-text-fill: #ece8e1; -fx-font-weight: bold; -fx-font-size: 13px; }
+.account-tag    { -fx-text-fill: rgba(236,232,225,0.45); -fx-font-size: 10px; }
+
+/* ─── Avero ID card ─────────────────────────────────────────────────── */
+/* Auth form wrapper */
+.avero-auth-card {
+    -fx-background-color: rgba(10,20,34,0.92);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.075);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-padding: 24;
+}
+/* Signed-in profile header */
+.avero-profile-header {
+    -fx-background-color: rgba(20,38,64,0.70);
+    -fx-background-radius: 0;
+    -fx-padding: 14 18 14 18;
+    -fx-border-color: rgba(255,255,255,0.06);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+}
+.avero-avatar {
+    -fx-background-color: #1c2a38;
+    -fx-background-radius: 0;
+    -fx-min-width: 48; -fx-min-height: 48;
+    -fx-max-width: 48; -fx-max-height: 48;
+}
+.avero-avatar-initial {
+    -fx-text-fill: #ece8e1;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
+.avero-username {
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.avero-email {
+    -fx-text-fill: rgba(236,232,225,0.50);
+    -fx-font-size: 11.5px;
+}
+.avero-badge {
+    -fx-background-color: rgba(236,232,225,0.14);
+    -fx-border-color: rgba(236,232,225,0.28);
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-text-fill: #ece8e1;
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+ 
+    -fx-padding: 3 8 3 8;
+    -fx-border-width: 1;
+}
+/* Section blocks within the profile card */
+.avero-section {
+    -fx-background-color: rgba(255,255,255,0.035);
+    -fx-background-radius: 0;
+    -fx-padding: 12 14 12 14;
+    -fx-border-color: rgba(255,255,255,0.055);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+}
+.avero-section-label {
+    -fx-text-fill: rgba(236,232,225,0.42);
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+ 
+}
+/* Cape row within wardrobe */
+.cape-row {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 0;
+    -fx-padding: 8 10 8 10;
+    -fx-border-color: rgba(255,255,255,0.05);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+}
+.cape-row-equipped {
+    -fx-background-color: rgba(236,232,225,0.08);
+    -fx-border-color: rgba(236,232,225,0.20);
+}
+.cape-preview-swatch {
+    -fx-background-radius: 0;
+    -fx-min-width: 28; -fx-min-height: 28;
+    -fx-max-width: 28; -fx-max-height: 28;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   PARTNER / SERVER / PROFILE CARDS
+   ════════════════════════════════════════════════════════════════════════ */
+.partner-name   { -fx-text-fill: #ece8e1; -fx-font-size: 13.5px; -fx-font-weight: bold; }
+.partner-desc   { -fx-text-fill: rgba(236,232,225,0.55); -fx-font-size: 11.5px; }
+.partner-ip     { -fx-text-fill: rgba(236,232,225,0.70); }
+.profile-name   { -fx-text-fill: #ece8e1; -fx-font-size: 14.5px; -fx-font-weight: bold; }
+.profile-tag    { -fx-text-fill: rgba(236,232,225,0.50); -fx-font-size: 11px; }
+.footer-title   { -fx-text-fill: #ece8e1; -fx-font-size: 12px; -fx-font-weight: bold; }
+.version-label  { -fx-text-fill: rgba(236,232,225,0.40); -fx-font-size: 10px; }
+
+.modpack-card-icon {
+    -fx-background-color: #1c2a38;
+    -fx-background-radius: 0;
+    -fx-min-width: 42; -fx-min-height: 42;
+    -fx-pref-width: 42; -fx-pref-height: 42;
+    -fx-max-width: 42; -fx-max-height: 42;
+}
+.modpack-card-icon-label { -fx-text-fill: #ece8e1; -fx-font-size: 16px; -fx-font-weight: bold; }
+.modpack-card-name { -fx-text-fill: #ece8e1; -fx-font-size: 12.5px; -fx-font-weight: bold; }
+.modpack-card-meta { -fx-text-fill: rgba(236,232,225,0.48); -fx-font-size: 10.5px; }
+.modpack-empty-hint { -fx-text-fill: rgba(236,232,225,0.40); -fx-font-size: 11.5px; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   ACTIVITY / CHANGELOG TABS
+   ════════════════════════════════════════════════════════════════════════ */
+.changelog-tabs, .changelog-tabs .tab-content-area {
+    -fx-background-color: transparent;
+}
+.changelog-tabs .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent rgba(255,255,255,0.06) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.changelog-tabs .tab-header-area { -fx-padding: 0; }
+.changelog-tabs .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 9 4 9 4;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.changelog-tabs .tab-container { -fx-padding: 0 14 0 0; }
+.changelog-tabs .tab:hover .tab-label { -fx-text-fill: #ece8e1; }
+.changelog-tabs .tab:selected {
+    -fx-border-color: transparent transparent #5da8d0 transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.changelog-tabs .tab .tab-label {
+    -fx-text-fill: rgba(236,232,225,0.42);
+    -fx-font-size: 10.5px;
+    -fx-font-weight: bold;
+ 
+}
+.changelog-tabs .tab:selected .tab-label { -fx-text-fill: #5da8d0; }
+.changelog-tabs .tab-down-button, .changelog-tabs .tab-up-button { -fx-background-color: transparent; }
+
+.news-row, .change-row {
+    -fx-padding: 0 0 10 0;
+    -fx-border-color: transparent transparent rgba(255,255,255,0.045) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.news-thumb {
+    -fx-background-color: rgba(236,232,225,0.14);
+    -fx-background-radius: 0;
+}
+.news-title, .change-title { -fx-text-fill: #ece8e1; -fx-font-size: 12.5px; -fx-font-weight: bold; }
+.news-desc, .change-desc   { -fx-text-fill: rgba(236,232,225,0.52); -fx-font-size: 11px; }
+.news-time {
+    -fx-background-color: rgba(94,201,122,0.14);
+    -fx-text-fill: #5ec97a;
+    -fx-font-size: 9px; -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-padding: 2 7 2 7;
+ 
+}
+.change-time { -fx-text-fill: rgba(236,232,225,0.36); -fx-font-size: 10px; }
+.change-icon {
+    -fx-background-color: rgba(236,232,225,0.12);
+    -fx-background-radius: 0;
+}
+.change-icon-glyph { -fx-text-fill: #5da8d0; -fx-font-size: 13px; -fx-font-weight: bold; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   ABOUT PAGE
+   ════════════════════════════════════════════════════════════════════════ */
+.about-app-name   { -fx-text-fill: #ece8e1; -fx-font-size: 22px; -fx-font-weight: bold; }
+.about-tagline    { -fx-text-fill: rgba(236,232,225,0.58); -fx-font-size: 12.5px; }
+.about-stat-title {
+    -fx-text-fill: rgba(236,232,225,0.45);
+    -fx-font-size: 9.5px; -fx-font-weight: bold; 
+}
+.about-stat-value    { -fx-text-fill: #ece8e1; -fx-font-size: 13px; -fx-font-weight: bold; }
+.about-stat-subvalue { -fx-text-fill: rgba(236,232,225,0.45); -fx-font-size: 10.5px; }
+.about-status-off     { -fx-background-color: rgba(255,255,255,0.07); -fx-text-fill: rgba(236,232,225,0.50); }
+.about-status-standby { -fx-background-color: rgba(224,160,48,0.14); -fx-text-fill: #e0a030; }
+.about-path-row {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 0;
+    -fx-padding: 9 12 9 12;
+}
+.about-path-label {
+    -fx-text-fill: rgba(236,232,225,0.42);
+    -fx-font-size: 9px; -fx-font-weight: bold; 
+}
+.about-path-value  { -fx-text-fill: #ece8e1; -fx-font-size: 11.5px; -fx-font-family: monospace; }
+.about-copied      { -fx-text-fill: #5ec97a; -fx-font-size: 11px; -fx-font-weight: bold; }
+.about-mirror-note { -fx-text-fill: rgba(236,232,225,0.52); -fx-font-size: 11.5px; }
+.about-tag {
+    -fx-background-color: rgba(236,232,225,0.08);
+    -fx-border-color: rgba(236,232,225,0.18);
+    -fx-border-radius: 0; -fx-background-radius: 0;
+    -fx-text-fill: rgba(236,232,225,0.70);
+    -fx-font-size: 10px; -fx-padding: 3 8 3 8; -fx-border-width: 1;
+}
+.about-legal { -fx-text-fill: rgba(236,232,225,0.35); -fx-font-size: 10.5px; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   MODS PAGE
+   ════════════════════════════════════════════════════════════════════════ */
+.mods-toolbar {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 0;
+    -fx-padding: 9 11 9 11;
+}
+.content-type-tabs {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 0;
+    -fx-padding: 4;
+}
+.mod-card-thumb {
+    -fx-background-color: rgba(26,58,92,0.60);
+    -fx-background-radius: 0 0 0 0;
+}
+.mod-card-title  { -fx-text-fill: #ece8e1; -fx-font-size: 13px; -fx-font-weight: bold; }
+.mod-card-author { -fx-text-fill: rgba(236,232,225,0.45); -fx-font-size: 10.5px; }
+.mod-card-desc   { -fx-text-fill: rgba(236,232,225,0.58); -fx-font-size: 11px; }
+.mod-card-stat {
+    -fx-background-color: rgba(255,255,255,0.055);
+    -fx-background-radius: 0;
+    -fx-padding: 2 6 2 6;
+    -fx-text-fill: rgba(236,232,225,0.60);
+    -fx-font-size: 10px;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   VERSIONS PAGE
+   ════════════════════════════════════════════════════════════════════════ */
+.version-id-label   { -fx-text-fill: #ece8e1; -fx-font-size: 12.5px; -fx-font-weight: bold; }
+.version-type-label {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 0;
+    -fx-padding: 2 6 2 6;
+    -fx-text-fill: rgba(236,232,225,0.55);
+    -fx-font-size: 9.5px; -fx-font-weight: bold; 
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   PLAY PAGE
+   ════════════════════════════════════════════════════════════════════════ */
+.play-card-hint { -fx-text-fill: rgba(236,232,225,0.52); -fx-font-size: 11.5px; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   HOME PAGE
+   ════════════════════════════════════════════════════════════════════════ */
+.activity-empty { -fx-text-fill: rgba(236,232,225,0.38); -fx-font-size: 11.5px; }
+.profile-banner {
+    -fx-background-color: linear-gradient(from 0% 0% to 36% 100%, #12253a 0%, #0b1a2c 100%);
+}
+.profile-ice-footer {
+    -fx-background-color: rgba(236,232,225,0.07);
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   STORE PAGE — CAPE CARDS
+   ════════════════════════════════════════════════════════════════════════ */
+.cape-card {
+    -fx-background-color: rgba(12,24,40,0.90);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+
+}
+.cape-card:hover {
+    -fx-border-color: rgba(236,232,225,0.20);
+    -fx-background-color: rgba(16,30,50,0.92);
+}
+.cape-card-owned {
+    -fx-border-color: rgba(236,232,225,0.18);
+}
+.cape-card-equipped {
+    -fx-border-color: rgba(94,201,122,0.28);
+    -fx-background-color: rgba(12,28,20,0.88);
+}
+.cape-preview-tile {
+    -fx-background-radius: 0 0 0 0;
+}
+.cape-name { -fx-text-fill: #ece8e1; -fx-font-size: 13px; -fx-font-weight: bold; }
+.cape-desc { -fx-text-fill: rgba(236,232,225,0.52); -fx-font-size: 11px; }
+.cape-price-tag {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 0;
+    -fx-padding: 3 8 3 8;
+    -fx-text-fill: rgba(236,232,225,0.65);
+    -fx-font-size: 10.5px;
+    -fx-font-weight: bold;
+}
+.cape-price-tag-free {
+    -fx-background-color: rgba(94,201,122,0.13);
+    -fx-text-fill: #5ec97a;
+}
+.cape-equipped-badge {
+    -fx-background-color: rgba(94,201,122,0.14);
+    -fx-border-color: rgba(94,201,122,0.28);
+    -fx-border-radius: 0; -fx-background-radius: 0;
+    -fx-text-fill: #5ec97a;
+    -fx-font-size: 9.5px; -fx-font-weight: bold;
+    -fx-padding: 2 7 2 7; -fx-border-width: 1;
+ 
+}
+.cape-limited-badge {
+    -fx-background-color: rgba(224,160,48,0.14);
+    -fx-border-color: rgba(224,160,48,0.28);
+    -fx-border-radius: 0; -fx-background-radius: 0;
+    -fx-text-fill: #e0a030;
+    -fx-font-size: 9.5px; -fx-font-weight: bold;
+    -fx-padding: 2 7 2 7; -fx-border-width: 1;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   UPDATE BANNER
+   ════════════════════════════════════════════════════════════════════════ */
+.first-run-banner {
+    -fx-background-color: rgba(236,232,225,0.08);
+    -fx-border-color: rgba(236,232,225,0.18);
+    -fx-border-width: 0 0 1 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   MISC
+   ════════════════════════════════════════════════════════════════════════ */
+.tooltip {
+    -fx-background-color: #121e2a;
+    -fx-text-fill: #ece8e1;
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-font-size: 11.5px;
+}
+.card-link { -fx-text-fill: #5da8d0; -fx-underline: false; }
+.card-link:hover { -fx-underline: true; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   V3 POLISH — richer surfaces, gradients, glow and motion
+   (appended last so it refines the rules above without removing them)
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Page headings */
+.page-title    { -fx-font-size: 28px; -fx-font-weight: bold; }
+.card-title    { -fx-text-fill: #ece8e1; -fx-font-size: 11px; -fx-font-weight: bold; }
+
+/* Buttons: gradient CTA with glow, soft secondary */
+.primary-cta-button, .login-button {
+    -fx-background-color: linear-gradient(to bottom, #f27a48, #d4521f);
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+
+}
+.primary-cta-button:hover, .login-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #ff5d6b, #ff4655);
+
+}
+.primary-cta-button:armed, .login-button:armed {
+    -fx-background-color: linear-gradient(to bottom, #bd3944, #bd3944);
+
+}
+.secondary-button {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-cursor: hand;
+}
+.secondary-button:hover {
+    -fx-background-color: rgba(236,232,225,0.14);
+    -fx-border-color: rgba(236,232,225,0.45);
+}
+
+/* Inputs */
+.text-field, .password-field {
+    -fx-background-color: rgba(8,16,28,0.90);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+    -fx-padding: 10 14 10 14;
+    -fx-prompt-text-fill: rgba(236,232,225,0.30);
+}
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #5da8d0;
+
+}
+
+/* Avero card */
+.avero-auth-card {
+    -fx-background-color: linear-gradient(to bottom right, rgba(18,34,58,0.96), rgba(8,16,28,0.96));
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.22);
+    -fx-padding: 28;
+
+}
+.avero-brand-mark {
+    -fx-background-color: linear-gradient(to bottom right, #ece8e1, #2f6fa3);
+    -fx-background-radius: 0;
+    -fx-min-width: 48; -fx-min-height: 48; -fx-max-width: 48; -fx-max-height: 48;
+
+}
+.avero-brand-letter { -fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold; }
+.avero-profile-header {
+    -fx-background-color: linear-gradient(to right, rgba(30,62,104,0.75), rgba(16,32,56,0.75));
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+.avero-avatar {
+    -fx-background-color: linear-gradient(to bottom right, #5da8d0, #1f4f7d);
+
+}
+.avero-avatar-initial { -fx-text-fill: white; }
+.avero-section { -fx-background-radius: 0; -fx-border-radius: 0; }
+.cape-row:hover { -fx-background-color: rgba(255,255,255,0.06); }
+.cape-row-equipped {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.16), rgba(236,232,225,0.04));
+}
+
+/* Minecraft account rows */
+.account-type-ms      { -fx-text-fill: #5ec97a; }
+.account-type-offline { -fx-text-fill: #e0a030; }
+.settings-section:hover { -fx-border-color: rgba(236,232,225,0.28); }
+
+/* Store cards: lift on hover */
+.cape-card {
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+
+}
+.cape-card:hover {
+    -fx-border-color: rgba(236,232,225,0.50);
+    -fx-scale-x: 1.025; -fx-scale-y: 1.025;
+
+}
+.cape-card-equipped { -fx-border-color: rgba(94,201,122,0.55); }
+.cape-name { -fx-font-size: 14px; -fx-font-weight: bold; }
+.cape-price-tag {
+    -fx-background-color: rgba(236,232,225,0.14);
+    -fx-text-fill: #9fd4ec;
+    -fx-background-radius: 0;
+    -fx-padding: 3 10 3 10;
+}
+.cape-price-tag-free { -fx-background-color: rgba(94,201,122,0.16); -fx-text-fill: #5ec97a; }
+.cape-limited-badge, .cape-equipped-badge { -fx-background-radius: 0; -fx-border-radius: 0; -fx-padding: 3 10 3 10; }
+
+/* Microsoft device-code dialog */
+.device-dialog {
+    -fx-background-color: linear-gradient(to bottom right, #14284a, #0f1923);
+    -fx-border-color: rgba(236,232,225,0.35);
+    -fx-border-width: 1;
+    -fx-padding: 22;
+}
+.device-dialog .button-bar .button { -fx-cursor: hand; }
+.device-dialog > .button-bar { -fx-background-color: transparent; }
+.device-dialog .content.label, .device-dialog .label { -fx-text-fill: #ece8e1; }
+.device-title   { -fx-font-size: 18px; -fx-font-weight: bold; }
+.device-step    { -fx-text-fill: rgba(236,232,225,0.65); -fx-font-size: 12px; -fx-text-alignment: center; }
+.device-uri     { -fx-text-fill: #ece8e1; -fx-font-size: 11.5px; -fx-font-weight: bold; }
+.device-waiting { -fx-text-fill: rgba(236,232,225,0.50); -fx-font-size: 11px; }
+.device-code-field {
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: rgba(0,0,0,0.38);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.55);
+    -fx-border-radius: 0;
+    -fx-padding: 14 18 14 18;
+    -fx-highlight-fill: rgba(236,232,225,0.45);
+    -fx-highlight-text-fill: white;
+}
+
+
+/* ── Accounts page: Microsoft hero + account rows ───────────────────────── */
+.ms-hero {
+    -fx-background-color: linear-gradient(to bottom right, rgba(24,52,92,0.97), rgba(8,18,34,0.97));
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.30);
+    -fx-padding: 24 26 22 26;
+
+}
+.ms-hero-title { -fx-text-fill: #ffffff; -fx-font-size: 19px; -fx-font-weight: bold; }
+.ms-hero-sub   { -fx-text-fill: rgba(236,232,225,0.62); -fx-font-size: 12px; }
+.ms-hero-button {
+    -fx-background-color: linear-gradient(to bottom, #3b86c4, #235f96);
+    -fx-text-fill: white;
+    -fx-font-size: 13.5px; -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-padding: 12 28 12 28;
+    -fx-cursor: hand;
+
+}
+.ms-hero-button:hover { -fx-background-color: linear-gradient(to bottom, #55a0dc, #2c73b3); }
+.ms-hero-button:disabled { -fx-opacity: 0.6; }
+.auto-chip {
+    -fx-background-color: rgba(94,201,122,0.12);
+    -fx-text-fill: #7fdc98;
+    -fx-background-radius: 0;
+    -fx-padding: 3 11 3 11;
+    -fx-font-size: 10.5px; -fx-font-weight: bold;
+}
+.account-row-active {
+    -fx-border-color: rgba(94,201,122,0.55);
+    -fx-background-color: linear-gradient(to right, rgba(94,201,122,0.10), rgba(94,201,122,0.02));
+}
+.field-hint      { -fx-font-size: 11.5px; -fx-font-weight: bold; }
+.field-hint-ok   { -fx-text-fill: #5ec97a; }
+.field-hint-bad  { -fx-text-fill: #e05a50; }
+.field-hint-wait { -fx-text-fill: rgba(236,232,225,0.45); }
+.device-timer    { -fx-text-fill: rgba(236,232,225,0.55); -fx-font-size: 11px; -fx-font-weight: bold; }
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   V4 — "AURORA GLASS" VISUAL POLISH
+   Pure visual layer: colours, gradients, glass edges, glow, depth.
+   No padding / size / structure is changed anywhere below, so every
+   page keeps exactly the same layout as before.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Window backdrop: deep navy with soft aurora glows ───────────────── */
+.app-root {
+    -fx-background-color:
+        radial-gradient(center 100% 0%, radius 62%, rgba(236,232,225,0.20) 0%, rgba(236,232,225,0.00) 100%),
+        radial-gradient(center 0% 100%, radius 55%, rgba(255,70,85,0.10) 0%, rgba(255,70,85,0.00) 100%),
+        radial-gradient(center 60% 45%, radius 60%, rgba(40,84,140,0.14) 0%, rgba(40,84,140,0.00) 100%),
+        linear-gradient(to bottom right, #0b1118 0%, #0b1118 55%, #0b1118 100%);
+}
+
+/* ── Scrollbars: slim, rounded, glowing on hover ─────────────────────── */
+.scroll-bar > .increment-button, .scroll-bar > .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+.scroll-bar > .increment-button > .increment-arrow,
+.scroll-bar > .decrement-button > .decrement-arrow { -fx-padding: 0; -fx-background-color: transparent; }
+.scroll-bar:vertical .track, .scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.30), rgba(236,232,225,0.22));
+    -fx-background-radius: 0;
+    -fx-background-insets: 1;
+}
+.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:pressed, .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.55), rgba(236,232,225,0.42));
+}
+.page-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.30), rgba(236,232,225,0.20));
+    -fx-background-radius: 0;
+}
+.page-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.55), rgba(236,232,225,0.42));
+}
+
+/* ── Sidebar: layered dark glass with a luminous edge ────────────────── */
+.sidebar {
+    -fx-background-color:
+        linear-gradient(to bottom, #0f1923 0%, #08111d 55%, #0b1118 100%),
+        linear-gradient(to bottom, rgba(236,232,225,0.07) 0%, rgba(236,232,225,0.00) 38%);
+    -fx-border-color: transparent linear-gradient(to bottom, rgba(236,232,225,0.22), rgba(255,255,255,0.04) 55%, rgba(255,70,85,0.14)) transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+.brand-label {
+    -fx-text-fill: #ffffff;
+
+}
+.brand-sublabel { -fx-text-fill: rgba(236,232,225,0.85); }
+.brand-mark, .footer-mark {
+    -fx-text-fill: #ff5d6b;
+
+}
+
+.nav-button {
+    -fx-background-radius: 0;
+    -fx-text-fill: rgba(236,232,225,0.55);
+}
+.nav-button:hover {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.12), rgba(236,232,225,0.02));
+    -fx-text-fill: #f5f1ea;
+}
+.nav-button:selected {
+    -fx-background-color:
+        linear-gradient(to right, rgba(255,70,85,0.30) 0%, rgba(255,70,85,0.07) 100%);
+    -fx-text-fill: #ff5d6b;
+    -fx-font-weight: bold;
+}
+.nav-button:selected .nav-icon,
+.nav-button:selected .nav-icon-fill { -fx-fill: #ff5d6b; }
+.nav-indicator {
+    -fx-background-color: linear-gradient(to bottom, #ff5d6b, #ff4655);
+
+}
+.sidebar-footer {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.00), rgba(255,255,255,0.025));
+    -fx-border-color: linear-gradient(to right, rgba(255,255,255,0.00), rgba(236,232,225,0.18), rgba(255,255,255,0.00)) transparent transparent transparent;
+}
+.footer-title { -fx-text-fill: #f5f1ea; }
+
+/* ── Top bar: frosted strip with a glowing hairline ──────────────────── */
+.top-bar {
+    -fx-background-color: linear-gradient(to bottom, rgba(12,22,38,0.92), rgba(8,15,26,0.78));
+    -fx-border-color: transparent transparent linear-gradient(to right, rgba(236,232,225,0.00), rgba(236,232,225,0.22) 30%, rgba(255,70,85,0.16) 75%, rgba(255,70,85,0.00)) transparent;
+}
+.search-field {
+    -fx-background-color: linear-gradient(to bottom, rgba(4,9,17,0.85), rgba(10,19,33,0.85));
+    -fx-background-radius: 0;
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.14));
+    -fx-border-radius: 0;
+}
+.search-field:hover {
+    -fx-border-color: rgba(236,232,225,0.45);
+}
+.search-field-icon { -fx-fill: rgba(236,232,225,0.65); }
+.account-chip {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.085), rgba(255,255,255,0.035));
+    -fx-background-radius: 0;
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
+    -fx-border-radius: 0;
+}
+.account-chip:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(236,232,225,0.18), rgba(236,232,225,0.06));
+    -fx-border-color: rgba(236,232,225,0.45);
+}
+.avatar-circle, .profile-avatar {
+    -fx-background-color: linear-gradient(to bottom right, #ece8e1, #1f4f7d);
+
+}
+.avatar-initial { -fx-text-fill: #ffffff; }
+
+/* ── Typography ──────────────────────────────────────────────────────── */
+.page-title {
+    -fx-text-fill: #f5f1ea;
+
+}
+.page-subtitle { -fx-text-fill: rgba(236,232,225,0.62); }
+.title-accent  { -fx-text-fill: #ff5d6b; }
+.section-header { -fx-text-fill: #f5f1ea; }
+.hero-greeting {
+
+}
+.hero-eyebrow { -fx-text-fill: #ece8e1; }
+
+/* ── Cards & panels: glass gradient, bright top edge, soft depth ─────── */
+.dashboard-card, .partner-card, .about-stat-card, .settings-section, .filters-panel {
+    -fx-background-color: linear-gradient(to bottom right, #1c2a38 0%, #121e2a 100%), linear-gradient(to bottom, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.00) 45%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0;
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.045) 60%, rgba(255,255,255,0.07) 100%);
+    -fx-border-radius: 0;
+
+}
+.mod-card, .modpack-card, .recommended-card {
+    -fx-background-color: linear-gradient(to bottom right, #1c2a38 0%, #121e2a 100%), linear-gradient(to bottom, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.00) 45%);
+    -fx-background-insets: 0, 0;
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.17) 0%, rgba(255,255,255,0.045) 60%, rgba(255,255,255,0.07) 100%);
+
+}
+.mod-card:hover, .modpack-card:hover, .partner-card:hover, .recommended-card:hover,
+.dashboard-card:hover, .about-stat-card:hover {
+    -fx-background-color: linear-gradient(to bottom right, #1c2a38 0%, #121e2a 100%), linear-gradient(to bottom, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.00) 45%);
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.65) 0%, rgba(236,232,225,0.18) 100%);
+
+}
+.settings-section:hover, .filters-panel:hover {
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.45) 0%, rgba(236,232,225,0.12) 100%);
+}
+.recommended-badge {
+    -fx-background-color: linear-gradient(to bottom, #ffc15a, #e0952a);
+    -fx-background-radius: 0;
+
+}
+.card-title { -fx-text-fill: #ece8e1; }
+.feature-card-title, .partner-name, .mod-card-title, .modpack-card-name { -fx-text-fill: #f5f1ea; }
+.mod-card-thumb { -fx-background-color: linear-gradient(to bottom right, rgba(38,84,130,0.75), rgba(16,36,60,0.75)); }
+
+/* ── Hero banner ─────────────────────────────────────────────────────── */
+.hero-banner { -fx-background-radius: 0; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.11), rgba(255,255,255,0.045));
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.20), rgba(255,255,255,0.07));
+}
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(236,232,225,0.24), rgba(236,232,225,0.09));
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.60), rgba(236,232,225,0.22));
+}
+.button:armed { -fx-background-color: linear-gradient(to bottom, rgba(236,232,225,0.30), rgba(236,232,225,0.14));
+}
+
+/* Glossy orange CTAs: gradient body + top highlight layer */
+.primary-cta-button, .login-button, .hero-play-button, .hero-setup-button,
+.hero-choose-version-button, .play-button {
+    -fx-background-color:
+        linear-gradient(to bottom, #ff5d6b 0%, #ff4655 55%, #bd3944 100%),
+        linear-gradient(to bottom, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.00) 55%);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+    -fx-text-fill: #ffffff;
+
+}
+.primary-cta-button:hover, .login-button:hover, .hero-play-button:hover, .hero-setup-button:hover,
+.hero-choose-version-button:hover, .play-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, #ff5d6b 0%, #ff4655 55%, #d85a26 100%),
+        linear-gradient(to bottom, rgba(255,255,255,0.36) 0%, rgba(255,255,255,0.00) 55%);
+
+}
+.primary-cta-button:armed, .login-button:armed, .hero-play-button:armed, .hero-setup-button:armed,
+.hero-choose-version-button:armed, .play-button:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, #bd3944 0%, #bd3944 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.12), rgba(0,0,0,0.00));
+
+}
+.primary-cta-button:disabled, .login-button:disabled, .hero-play-button:disabled,
+.hero-setup-button:disabled, .hero-choose-version-button:disabled, .play-button:disabled {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,70,85,0.40), rgba(255,70,85,0.28)), transparent;
+
+}
+
+/* Outlined secondary */
+.secondary-button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: linear-gradient(to bottom, rgba(255,70,85,0.14), rgba(255,70,85,0.04));
+    -fx-border-color: linear-gradient(to bottom, rgba(255,93,107,0.70), rgba(255,70,85,0.35));
+    -fx-text-fill: #ff5d6b;
+}
+.secondary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,70,85,0.30), rgba(255,70,85,0.10));
+    -fx-border-color: #ff5d6b;
+    -fx-text-fill: #ff5d6b;
+}
+
+/* Microsoft button */
+.ms-hero-button {
+    -fx-background-color:
+        linear-gradient(to bottom, #4a97d8 0%, #2a6aa6 100%),
+        linear-gradient(to bottom, rgba(255,255,255,0.28), rgba(255,255,255,0.00) 55%);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+}
+.ms-hero-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, #62adec 0%, #3478b8 100%),
+        linear-gradient(to bottom, rgba(255,255,255,0.34), rgba(255,255,255,0.00) 55%);
+
+}
+
+/* ── Segmented tab bars ──────────────────────────────────────────────── */
+.play-tab-bar, .content-type-tabs, .source-toggle-bar, .mods-toolbar {
+    -fx-background-color: linear-gradient(to bottom, rgba(4,9,17,0.60), rgba(10,19,33,0.60));
+    -fx-background-radius: 0;
+}
+.play-tab-bar, .content-type-tabs { -fx-background-radius: 0; }
+.play-tab-button, .type-tab-button { -fx-background-radius: 0; }
+.play-tab-button:hover, .type-tab-button:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(236,232,225,0.14), rgba(236,232,225,0.04));
+}
+.play-tab-button:selected, .type-tab-button:selected {
+    -fx-background-color:
+        linear-gradient(to bottom, #ff5d6b 0%, #bd3944 100%),
+        linear-gradient(to bottom, rgba(255,255,255,0.26), rgba(255,255,255,0.00) 55%);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+
+}
+.source-toggle-button:selected {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,70,85,0.30), rgba(255,70,85,0.10));
+    -fx-border-color: rgba(255,93,107,0.65);
+    -fx-text-fill: #ff5d6b;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────── */
+.combo-box, .text-field, .text-area, .password-field {
+    -fx-background-color: linear-gradient(to bottom, rgba(4,9,17,0.88), rgba(10,19,33,0.88));
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.07), rgba(255,255,255,0.15));
+}
+.combo-box:hover, .text-field:hover, .password-field:hover, .text-area:hover {
+    -fx-border-color: rgba(236,232,225,0.40);
+}
+.combo-box:focused, .text-area:focused {
+    -fx-border-color: #ece8e1;
+
+}
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #ece8e1;
+
+}
+.combo-box > .arrow-button { -fx-background-color: transparent; }
+.combo-box > .arrow-button > .arrow { -fx-background-color: rgba(236,232,225,0.85); -fx-background-insets: 0; }
+.combo-box-popup > .list-view {
+    -fx-background-color: linear-gradient(to bottom, #121e2a, #0f1923);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.30);
+    -fx-border-radius: 0;
+    -fx-border-width: 1;
+}
+.list-cell:filled:hover    { -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.20), rgba(236,232,225,0.05)); }
+.list-cell:filled:selected { -fx-background-color: linear-gradient(to right, rgba(255,70,85,0.34), rgba(255,70,85,0.10)); -fx-text-fill: #ffffff; }
+.check-box .box {
+    -fx-background-color: linear-gradient(to bottom, rgba(4,9,17,0.85), rgba(10,19,33,0.85));
+    -fx-border-color: rgba(255,255,255,0.22);
+}
+.check-box:hover .box { -fx-border-color: rgba(236,232,225,0.65); }
+.check-box:selected .box {
+    -fx-background-color: linear-gradient(to bottom, #ff5d6b, #bd3944);
+    -fx-border-color: #ff5d6b;
+
+}
+
+/* ── Progress & sliders ──────────────────────────────────────────────── */
+.progress-bar > .track {
+    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(255,255,255,0.07));
+    -fx-background-radius: 0;
+}
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #ff4655 0%, #ff5d6b 100%);
+    -fx-background-radius: 0;
+
+}
+.slider .track {
+    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(255,255,255,0.09));
+}
+.slider .thumb {
+    -fx-background-color: linear-gradient(to bottom, #ff5d6b, #ff4655);
+
+}
+
+/* ── Status chips & pills: rounded, softly glowing ───────────────────── */
+.status-chip, .about-status-pill, .modpack-card-tag, .mod-tag, .partner-mode-badge {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.11), rgba(255,255,255,0.05));
+    -fx-background-radius: 0;
+    -fx-text-fill: rgba(236,232,225,0.82);
+}
+.status-ok, .about-status-active {
+    -fx-background-color: linear-gradient(to bottom, rgba(94,201,122,0.24), rgba(94,201,122,0.10));
+    -fx-text-fill: #7fe39a;
+}
+.status-warn { -fx-background-color: linear-gradient(to bottom, rgba(224,160,48,0.26), rgba(224,160,48,0.10)); -fx-text-fill: #f2b848; }
+.status-err  { -fx-background-color: linear-gradient(to bottom, rgba(224,90,80,0.26), rgba(224,90,80,0.10));  -fx-text-fill: #f2756c; }
+.mod-card-stat, .version-type-label, .cape-price-tag { -fx-background-radius: 0; }
+.news-time { -fx-background-radius: 0; -fx-background-color: linear-gradient(to bottom, rgba(94,201,122,0.26), rgba(94,201,122,0.10)); }
+.about-tag { -fx-background-radius: 0; -fx-border-radius: 0; }
+.avero-badge { -fx-background-radius: 0; -fx-border-radius: 0; -fx-background-color: linear-gradient(to bottom, rgba(236,232,225,0.26), rgba(236,232,225,0.10)); }
+
+/* ── Tabs (changelog / news) ─────────────────────────────────────────── */
+.changelog-tabs .tab:selected {
+    -fx-border-color: transparent transparent #ff5d6b transparent;
+}
+.changelog-tabs .tab:selected .tab-label { -fx-text-fill: #ff5d6b; }
+.changelog-tabs .tab .tab-label { -fx-text-fill: rgba(236,232,225,0.48); }
+.news-row, .change-row {
+    -fx-border-color: transparent transparent linear-gradient(to right, rgba(255,255,255,0.09), rgba(255,255,255,0.00)) transparent;
+}
+.news-thumb { -fx-background-color: linear-gradient(to bottom right, rgba(236,232,225,0.30), rgba(236,232,225,0.08)); }
+.change-icon { -fx-background-color: linear-gradient(to bottom right, rgba(236,232,225,0.28), rgba(236,232,225,0.08)); }
+.change-icon-glyph { -fx-text-fill: #ece8e1; }
+.modpack-card-icon { -fx-background-color: linear-gradient(to bottom right, #2a5d92, #1c2a38); }
+.modpack-card-icon-label { -fx-text-fill: #ece8e1; }
+
+/* ── Profile / Avero ID / account rows ───────────────────────────────── */
+.profile-banner { -fx-background-color: linear-gradient(to bottom right, #1c2a38 0%, #0b1a2c 100%); }
+.profile-ice-footer { -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.14), rgba(236,232,225,0.03)); }
+.avero-section, .cape-row, .about-path-row {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+}
+.avero-auth-card {
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.45), rgba(236,232,225,0.08) 65%, rgba(255,70,85,0.18));
+}
+.avero-profile-header {
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+}
+.ms-hero {
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.55), rgba(236,232,225,0.10) 70%, rgba(255,70,85,0.20));
+}
+.account-row-active {
+    -fx-border-color: linear-gradient(to bottom, rgba(94,201,122,0.75), rgba(94,201,122,0.25));
+}
+
+/* ── Store ───────────────────────────────────────────────────────────── */
+.cape-card {
+    -fx-background-color: linear-gradient(to bottom right, #1c2a38, #0f1923), linear-gradient(to bottom, rgba(255,255,255,0.055), rgba(255,255,255,0.00) 45%);
+    -fx-background-insets: 0, 0;
+    -fx-border-color: linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+}
+.cape-card:hover {
+    -fx-background-color: linear-gradient(to bottom right, #1c2a38, #121e2a), linear-gradient(to bottom, rgba(255,255,255,0.07), rgba(255,255,255,0.00) 45%);
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.75), rgba(236,232,225,0.20));
+}
+.cape-card-equipped {
+    -fx-background-color: linear-gradient(to bottom right, #102e22, #091814), linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0.00) 45%);
+    -fx-border-color: linear-gradient(to bottom, rgba(94,201,122,0.80), rgba(94,201,122,0.25));
+
+}
+.cape-price-tag { -fx-background-color: linear-gradient(to bottom, rgba(236,232,225,0.26), rgba(236,232,225,0.10)); }
+.cape-price-tag-free { -fx-background-color: linear-gradient(to bottom, rgba(94,201,122,0.28), rgba(94,201,122,0.10)); }
+
+/* ── Banners, tooltips, menus, dialogs ───────────────────────────────── */
+.first-run-banner {
+    -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.18), rgba(236,232,225,0.05));
+    -fx-border-color: transparent transparent rgba(236,232,225,0.30) transparent;
+}
+.tooltip {
+    -fx-background-color: linear-gradient(to bottom, #13243a, #0f1923);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.30);
+    -fx-border-radius: 0;
+
+}
+.context-menu, .menu-bar .menu .context-menu {
+    -fx-background-color: linear-gradient(to bottom, #121e2a, #0f1923);
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.28);
+    -fx-border-radius: 0;
+}
+.menu-item:focused { -fx-background-color: linear-gradient(to right, rgba(255,70,85,0.34), rgba(255,70,85,0.10)); }
+.menu-item .label { -fx-text-fill: #ece8e1; }
+.dialog-pane {
+    -fx-background-color:
+        radial-gradient(center 100% 0%, radius 70%, rgba(236,232,225,0.18) 0%, rgba(236,232,225,0.00) 100%),
+        linear-gradient(to bottom right, #121e2a, #0f1923);
+}
+.dialog-pane > .content.label, .dialog-pane .label { -fx-text-fill: #ece8e1; }
+.dialog-pane > .button-bar > .container { -fx-background-color: transparent; }
+.dialog-pane > .header-panel { -fx-background-color: transparent; }
+.device-dialog {
+    -fx-background-color:
+        radial-gradient(center 50% 0%, radius 80%, rgba(236,232,225,0.22) 0%, rgba(236,232,225,0.00) 100%),
+        linear-gradient(to bottom right, #1c2a38, #0f1923);
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.60), rgba(236,232,225,0.12));
+}
+.device-code-field {
+    -fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0.50), rgba(0,0,0,0.30));
+    -fx-border-color: linear-gradient(to bottom, rgba(236,232,225,0.80), rgba(236,232,225,0.35));
+
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   V4.1 — BUG FIXES & REFINEMENTS
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* FIX: the top-bar search box is a TextField, so the global .text-field rule
+   drew a second filled/bordered box inside the search pill. Make it flat. */
+.text-field.search-field-input,
+.text-field.search-field-input:hover,
+.text-field.search-field-input:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+
+    -fx-padding: 4 2 4 2;
+    -fx-text-fill: #ece8e1;
+    -fx-prompt-text-fill: rgba(236,232,225,0.40);
+}
+.search-field { -fx-background-color: linear-gradient(to bottom, #0b1118, #0f1923); }
+
+/* FIX: Modena focus/shadow insets leaking into our single-layer backgrounds
+   (made focused controls grow, comboboxes sit 1px low, checkboxes offset). */
+.nav-button, .play-tab-button, .type-tab-button, .source-toggle-button { -fx-background-insets: 0; }
+.text-field, .password-field, .text-area, .combo-box { -fx-background-insets: 0; }
+.check-box .box { -fx-background-insets: 0; -fx-background-radius: 0; -fx-border-radius: 0; }
+.text-field, .password-field, .text-area {
+    -fx-highlight-fill: rgba(236,232,225,0.45);
+    -fx-highlight-text-fill: #ffffff;
+}
+
+/* FIX: hover-scaling the store cards clipped their corners against the
+   scroll viewport and made neighbours overlap. Lift with colour/shadow only. */
+.cape-card:hover { -fx-scale-x: 1; -fx-scale-y: 1; }
+
+/* FIX: placeholder brand marks (sidebar "▲", footer "A", About "A") had no
+   styling at all, so they showed as bare letters. Proper tiles; if a logo
+   image is available the Java code makes the tile transparent automatically. */
+.brand-mark, .footer-mark, .about-mark {
+    -fx-background-color:
+        linear-gradient(to bottom right, #ff5d6b 0%, #ff4655 55%, #bd3944 100%),
+        linear-gradient(to bottom, rgba(255,255,255,0.30), rgba(255,255,255,0.00) 55%);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0;
+    -fx-alignment: center;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+
+}
+.brand-mark  { -fx-min-width: 34; -fx-min-height: 34; -fx-max-width: 34; -fx-max-height: 34; -fx-font-size: 14px; }
+.footer-mark { -fx-min-width: 30; -fx-min-height: 30; -fx-max-width: 30; -fx-max-height: 30; -fx-font-size: 14px; -fx-background-radius: 0; }
+.about-mark  { -fx-min-width: 72; -fx-min-height: 72; -fx-max-width: 72; -fx-max-height: 72; -fx-font-size: 32px; -fx-background-radius: 0; }
+
+/* FIX: big Play button lost its 12px radius to the generic CTA rule */
+.play-page-cta { -fx-background-radius: 0, 0; }
+.ms-hero-button:armed {
+    -fx-background-color: linear-gradient(to bottom, #235f96, #1b4c78), linear-gradient(to bottom, rgba(0,0,0,0.10), rgba(0,0,0,0.00));
+
+}
+
+/* Links, separators, small refinements */
+.hyperlink { -fx-text-fill: #ece8e1; -fx-border-color: transparent; }
+.hyperlink:hover { -fx-text-fill: #ece8e1; -fx-underline: true; }
+.hyperlink:visited { -fx-text-fill: #ece8e1; }
+.separator:horizontal .line {
+    -fx-border-color: linear-gradient(to right, rgba(255,255,255,0.00), rgba(236,232,225,0.22), rgba(255,255,255,0.00)) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-background-color: transparent;
+}
+.separator:vertical .line {
+    -fx-border-color: transparent transparent transparent rgba(255,255,255,0.08);
+    -fx-border-width: 0 0 0 1;
+    -fx-background-color: transparent;
+}
+.status-chip-detail, .about-stat-value, .account-name, .profile-name { -fx-text-fill: #f5f1ea; }
+.mod-card-author, .account-tag, .version-label { -fx-text-fill: rgba(236,232,225,0.55); }
+
+/* ── Radio buttons (skin arm-model picker) ─────────────────────────────── */
+.radio-button { -fx-text-fill: #ece8e1; }
+.radio-button > .radio {
+    -fx-background-color: linear-gradient(to bottom, rgba(4,9,17,0.90), rgba(10,19,33,0.90));
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: rgba(255,255,255,0.28);
+    -fx-border-radius: 0;
+}
+.radio-button:hover > .radio { -fx-border-color: rgba(236,232,225,0.70); }
+.radio-button:selected > .radio { -fx-border-color: #ff5d6b; }
+.radio-button > .radio > .dot { -fx-background-color: transparent; -fx-background-insets: 0; }
+.radio-button:selected > .radio > .dot {
+    -fx-background-color: #ff5d6b;
+
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════
+   V5 — VALORANT-STYLE CLIENT UI
+   Near-black navy surfaces, signature red (#FF4655), off-white text (#ECE8E1),
+   square edges, hairline borders, bold uppercase condensed type, flat fills.
+   No blurred shadows anywhere: flatter look AND much cheaper to render.
+   Structure (padding / sizes / layout) is untouched.
+   ════════════════════════════════════════════════════════════════════════ */
+
+* {
+    -accent: #ff4655; -accent-l: #ff5d6b; -accent-d: #bd3944;
+    -cta: #ff4655; -cta-l: #ff5d6b; -cta-d: #bd3944;
+    -text: #ece8e1;
+    -text-dim: rgba(236,232,225,0.62);
+    -text-mute: rgba(236,232,225,0.40);
+    -border: rgba(236,232,225,0.09);
+    -border-2: rgba(236,232,225,0.18);
+}
+
+.root, .app-root {
+    -fx-base: #0f1923;
+    -fx-background: #0f1923;
+    -fx-control-inner-background: #0b1118;
+    -fx-control-inner-background-alt: #0b1118;
+    -fx-accent: #ff4655;
+    -fx-focus-color: #ff4655;
+    -fx-faint-focus-color: transparent;
+    -fx-selection-bar: rgba(255,70,85,0.50);
+    -fx-selection-bar-non-focused: rgba(255,70,85,0.24);
+    -fx-text-background-color: #ece8e1;
+}
+.app-root {
+    -fx-background-color:
+        radial-gradient(center 0% 100%, radius 55%, rgba(255,70,85,0.12) 0%, rgba(255,70,85,0.00) 100%),
+        linear-gradient(to bottom right, rgba(255,70,85,0.00) 0%, rgba(255,70,85,0.00) 66%, rgba(255,70,85,0.075) 66%, rgba(255,70,85,0.075) 80%, rgba(255,70,85,0.00) 80%),
+        linear-gradient(to bottom right, rgba(255,70,85,0.00) 0%, rgba(255,70,85,0.00) 84%, rgba(255,70,85,0.22) 84%, rgba(255,70,85,0.22) 84.4%, rgba(255,70,85,0.00) 84.4%),
+        linear-gradient(to bottom, #0f1923 0%, #0b1118 100%);
+}
+
+/* ── Typography: Barlow Condensed (display) + Barlow (body) ──────────── */
+.page-title      { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 40px; -fx-text-fill: #ece8e1; }
+.page-subtitle   { -fx-font-size: 14px; -fx-text-fill: rgba(236,232,225,0.62); }
+.section-header  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: #ece8e1; }
+.card-title      { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #ff4655; }
+.title-accent    { -fx-text-fill: #ff4655; }
+.feature-card-title, .partner-name, .mod-card-title, .modpack-card-name,
+.news-title, .change-title, .cape-name, .about-app-name, .ms-hero-title, .device-title {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #f5f1ea;
+}
+.ms-hero-title   { -fx-font-size: 26px; }
+.about-app-name  { -fx-font-size: 34px; }
+.status-chip-title, .about-stat-title, .avero-section-label, .hero-eyebrow {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: rgba(236,232,225,0.55);
+}
+.hero-eyebrow    { -fx-text-fill: #ff4655; -fx-font-size: 15px; }
+.hero-greeting   { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 56px; -fx-text-fill: #ffffff; }
+.account-name, .profile-name, .avero-username {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 17px; -fx-text-fill: #f5f1ea;
+}
+.brand-label     { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 24px; -fx-text-fill: #ffffff; }
+.brand-sublabel  { -fx-font-size: 10.5px; -fx-text-fill: #ff4655; -fx-font-weight: bold; }
+
+/* ── Sidebar: flat black with a hairline, red selection bar ──────────── */
+.sidebar {
+    -fx-background-color: #0b1118;
+    -fx-border-color: transparent rgba(236,232,225,0.08) transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+.nav-button {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 18px;
+    -fx-background-color: transparent; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-text-fill: rgba(236,232,225,0.55);
+}
+.nav-button:hover { -fx-background-color: rgba(236,232,225,0.05); -fx-text-fill: #ece8e1; }
+.nav-button:selected {
+    -fx-background-color: linear-gradient(to right, rgba(255,70,85,0.22) 0%, rgba(255,70,85,0.00) 100%);
+    -fx-text-fill: #ffffff;
+}
+.nav-button:selected .nav-icon, .nav-button:selected .nav-icon-fill { -fx-fill: #ff4655; }
+.nav-indicator { -fx-background-color: #ff4655; }
+.sidebar-footer {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(236,232,225,0.08) transparent transparent transparent;
+}
+.footer-title { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #ece8e1; }
+
+.brand-mark, .footer-mark, .about-mark {
+    -fx-background-color: #ff4655; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-text-fill: #ffffff; -fx-font-family: "Avero Display"; -fx-font-weight: bold;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.top-bar {
+    -fx-background-color: #0f1923;
+    -fx-border-color: transparent transparent rgba(236,232,225,0.09) transparent;
+}
+.search-field {
+    -fx-background-color: #0b1118; -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.14); -fx-border-radius: 0;
+}
+.search-field:hover { -fx-border-color: rgba(236,232,225,0.38); }
+.search-field:focus-within { -fx-border-color: #ff4655; }
+.search-field-icon { -fx-fill: rgba(236,232,225,0.55); }
+.account-chip {
+    -fx-background-color: rgba(236,232,225,0.05); -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.14); -fx-border-radius: 0;
+}
+.account-chip:hover { -fx-background-color: rgba(255,70,85,0.10); -fx-border-color: #ff4655; }
+.avatar-circle, .profile-avatar, .avero-avatar { -fx-background-color: #ff4655; -fx-background-radius: 0; }
+.avatar-initial, .avero-avatar-initial { -fx-text-fill: #ffffff; -fx-font-family: "Avero Display"; -fx-font-weight: bold; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.button {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 16px;
+    -fx-background-color: rgba(236,232,225,0.06); -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.22); -fx-border-radius: 0;
+    -fx-text-fill: #ece8e1;
+}
+.button:hover { -fx-background-color: rgba(236,232,225,0.12); -fx-border-color: #ece8e1; }
+.button:armed { -fx-background-color: rgba(255,70,85,0.28); -fx-border-color: #ff4655; }
+
+/* Primary: solid red with a darker underside (flat, but with weight) */
+.primary-cta-button, .login-button, .hero-play-button, .hero-setup-button,
+.hero-choose-version-button, .play-button, .play-page-cta {
+    -fx-background-color: #bd3944, #ff4655;
+    -fx-background-insets: 0, 0 0 3 0;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-radius: 0;
+    -fx-text-fill: #ffffff; -fx-font-size: 17px;
+}
+.primary-cta-button:hover, .login-button:hover, .hero-play-button:hover, .hero-setup-button:hover,
+.hero-choose-version-button:hover, .play-button:hover, .play-page-cta:hover {
+    -fx-background-color: #d94555, #ff5d6b;
+    -fx-border-color: transparent;
+}
+.primary-cta-button:armed, .login-button:armed, .hero-play-button:armed, .hero-setup-button:armed,
+.hero-choose-version-button:armed, .play-button:armed, .play-page-cta:armed {
+    -fx-background-color: #8f2a34, #bd3944;
+    -fx-border-color: transparent;
+}
+.primary-cta-button:disabled, .login-button:disabled, .hero-play-button:disabled,
+.hero-setup-button:disabled, .hero-choose-version-button:disabled, .play-button:disabled, .play-page-cta:disabled {
+    -fx-background-color: #4a2a30, #5e3038; -fx-text-fill: rgba(255,255,255,0.55);
+}
+.play-button-label { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 26px; -fx-text-fill: #ffffff; }
+.play-card-hint { -fx-font-size: 13.5px; -fx-text-fill: rgba(236,232,225,0.55); }
+
+/* Secondary: red outline that fills on hover */
+.secondary-button {
+    -fx-background-color: transparent; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-border-color: #ff4655; -fx-border-radius: 0; -fx-text-fill: #ff4655;
+}
+.secondary-button:hover { -fx-background-color: #ff4655; -fx-border-color: #ff4655; -fx-text-fill: #ffffff; }
+.secondary-button:armed { -fx-background-color: #bd3944; -fx-border-color: #bd3944; -fx-text-fill: #ffffff; }
+
+.ms-hero-button {
+    -fx-background-color: #2a6aa6, #3a82c4; -fx-background-insets: 0, 0 0 3 0; -fx-background-radius: 0, 0;
+    -fx-text-fill: #ffffff; -fx-font-size: 17px; -fx-border-color: transparent;
+}
+.ms-hero-button:hover { -fx-background-color: #3478b8, #4a97d8; }
+.ms-hero-button:armed { -fx-background-color: #1f5586, #2a6aa6; }
+
+/* ── Tab bars: flat strip, red underline on the selected tab ─────────── */
+.play-tab-bar, .content-type-tabs, .source-toggle-bar, .mods-toolbar {
+    -fx-background-color: #0b1118; -fx-background-radius: 0;
+}
+.play-tab-button, .type-tab-button, .source-toggle-button {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 16px;
+    -fx-background-color: transparent; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-text-fill: rgba(236,232,225,0.55);
+}
+.play-tab-button:hover, .type-tab-button:hover, .source-toggle-button:hover {
+    -fx-background-color: rgba(236,232,225,0.06); -fx-text-fill: #ece8e1;
+}
+.play-tab-button:selected, .type-tab-button:selected {
+    -fx-background-color: #ff4655, rgba(236,232,225,0.07);
+    -fx-background-insets: 0, 0 0 3 0; -fx-background-radius: 0, 0;
+    -fx-text-fill: #ffffff;
+}
+.source-toggle-button:selected {
+    -fx-background-color: rgba(255,70,85,0.16); -fx-border-color: #ff4655; -fx-text-fill: #ffffff;
+}
+
+/* ── Cards & panels: flat dark slab, hairline edge, red top edge on hover ── */
+.dashboard-card, .partner-card, .about-stat-card, .settings-section, .filters-panel,
+.mod-card, .modpack-card, .recommended-card, .cape-card {
+    -fx-background-color: #111b25; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.08); -fx-border-radius: 0;
+}
+.dashboard-card:hover, .partner-card:hover, .about-stat-card:hover,
+.mod-card:hover, .modpack-card:hover, .recommended-card:hover, .cape-card:hover {
+    -fx-background-color: #ff4655, #16222e; -fx-background-insets: 0, 2 0 0 0; -fx-background-radius: 0, 0;
+    -fx-border-color: rgba(236,232,225,0.14);
+}
+.settings-section:hover, .filters-panel:hover { -fx-border-color: rgba(236,232,225,0.20); }
+.avero-section, .cape-row, .about-path-row { -fx-background-color: rgba(236,232,225,0.04); -fx-background-radius: 0; }
+.cape-card { -fx-scale-x: 1; -fx-scale-y: 1; }
+.cape-card:hover { -fx-scale-x: 1; -fx-scale-y: 1; }
+.cape-card-equipped, .account-row-active {
+    -fx-background-color: #3ddc97, #121f22; -fx-background-insets: 0, 0 0 0 3; -fx-background-radius: 0, 0;
+    -fx-border-color: rgba(61,220,151,0.35);
+}
+.avero-auth-card, .ms-hero {
+    -fx-background-color: #ff4655, #121c27; -fx-background-insets: 0, 3 0 0 0; -fx-background-radius: 0, 0;
+    -fx-border-color: rgba(236,232,225,0.10);
+}
+.avero-profile-header { -fx-border-color: rgba(236,232,225,0.12); }
+.first-run-banner {
+    -fx-background-color: #ff4655, linear-gradient(to right, #2a1f2b 0%, #18202b 55%, #121b26 100%);
+    -fx-background-insets: 0, 0 0 0 4; -fx-background-radius: 0, 0;
+    -fx-border-color: transparent transparent rgba(236,232,225,0.12) transparent;
+}
+.mod-card-thumb, .news-thumb, .change-icon, .modpack-card-icon, .profile-banner {
+    -fx-background-color: #1a2733; -fx-background-radius: 0;
+}
+.modpack-card-icon-label, .change-icon-glyph { -fx-text-fill: #ff4655; -fx-font-family: "Avero Display"; -fx-font-weight: bold; }
+.recommended-badge { -fx-background-color: #ff4655; -fx-background-radius: 0; -fx-text-fill: #ffffff; }
+.cape-limited-badge, .cape-equipped-badge, .avero-badge, .about-tag, .mod-tag, .modpack-card-tag,
+.partner-mode-badge, .version-type-label, .mod-card-stat, .cape-price-tag, .cape-price-tag-free, .news-time {
+    -fx-background-radius: 0; -fx-border-radius: 0;
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 13px;
+}
+.news-row, .change-row { -fx-border-color: transparent transparent rgba(236,232,225,0.07) transparent; }
+.profile-ice-footer { -fx-background-color: rgba(255,70,85,0.10); }
+
+/* ── Status chips: square tags with a hairline ───────────────────────── */
+.status-chip, .about-status-pill {
+    -fx-background-color: rgba(236,232,225,0.06); -fx-background-radius: 0;
+    -fx-text-fill: rgba(236,232,225,0.85); -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 14px;
+}
+.status-ok, .about-status-active { -fx-background-color: rgba(61,220,151,0.14); -fx-text-fill: #3ddc97; }
+.status-warn { -fx-background-color: rgba(240,184,74,0.14); -fx-text-fill: #f0b84a; }
+.status-err  { -fx-background-color: rgba(255,70,85,0.16);  -fx-text-fill: #ff6b78; }
+
+/* ── Inputs: dark wells, red when focused ────────────────────────────── */
+.text-field, .password-field, .text-area, .combo-box {
+    -fx-background-color: #0b1118; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.16); -fx-border-radius: 0;
+    -fx-text-fill: #ece8e1; -fx-prompt-text-fill: rgba(236,232,225,0.38);
+    -fx-font-size: 14px;
+}
+.text-field:hover, .password-field:hover, .text-area:hover, .combo-box:hover { -fx-border-color: rgba(236,232,225,0.40); }
+.text-field:focused, .password-field:focused, .text-area:focused, .combo-box:focused { -fx-border-color: #ff4655; }
+.text-field.search-field-input, .text-field.search-field-input:hover, .text-field.search-field-input:focused {
+    -fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-padding: 4 2 4 2;
+}
+.combo-box > .arrow-button > .arrow { -fx-background-color: #ff4655; }
+.combo-box-popup > .list-view {
+    -fx-background-color: #0f1923; -fx-background-radius: 0;
+    -fx-border-color: #ff4655; -fx-border-radius: 0; -fx-border-width: 1;
+}
+.list-cell { -fx-font-size: 14px; }
+.list-cell:filled:hover    { -fx-background-color: rgba(236,232,225,0.08); }
+.list-cell:filled:selected { -fx-background-color: #ff4655; -fx-text-fill: #ffffff; }
+.check-box .box { -fx-background-color: #0b1118; -fx-background-radius: 0; -fx-border-color: rgba(236,232,225,0.32); -fx-border-radius: 0; }
+.check-box:hover .box { -fx-border-color: #ece8e1; }
+.check-box:selected .box { -fx-background-color: #ff4655; -fx-border-color: #ff4655; }
+.check-box:selected .mark { -fx-background-color: #ffffff; }
+.radio-button > .radio { -fx-background-color: #0b1118; -fx-background-radius: 0; -fx-border-color: rgba(236,232,225,0.32); -fx-border-radius: 0; }
+.radio-button:selected > .radio { -fx-border-color: #ff4655; }
+.radio-button:selected > .radio > .dot { -fx-background-color: #ff4655; -fx-background-radius: 0; }
+.field-hint-ok { -fx-text-fill: #3ddc97; } .field-hint-bad { -fx-text-fill: #ff6b78; }
+
+/* ── Progress / slider ───────────────────────────────────────────────── */
+.progress-bar > .track { -fx-background-color: rgba(236,232,225,0.10); -fx-background-radius: 0; }
+.progress-bar > .bar   { -fx-background-color: #ff4655; -fx-background-radius: 0; }
+.slider .track { -fx-background-color: rgba(236,232,225,0.14); -fx-background-radius: 0; }
+.slider .thumb { -fx-background-color: #ff4655; -fx-background-radius: 0; }
+
+/* ── Scrollbars: hairline, red on hover ──────────────────────────────── */
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb,
+.page-scroll .scroll-bar:vertical .thumb { -fx-background-color: rgba(236,232,225,0.22); -fx-background-radius: 0; -fx-background-insets: 1; }
+.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:pressed, .scroll-bar:horizontal .thumb:pressed,
+.page-scroll .scroll-bar:vertical .thumb:hover { -fx-background-color: #ff4655; }
+
+/* ── Tooltips, menus, dialogs ────────────────────────────────────────── */
+.tooltip {
+    -fx-background-color: #ff4655, #0f1923; -fx-background-insets: 0, 0 0 0 3; -fx-background-radius: 0, 0;
+    -fx-text-fill: #ece8e1; -fx-font-size: 13px;
+}
+.context-menu { -fx-background-color: #0f1923; -fx-background-radius: 0; -fx-border-color: #ff4655; -fx-border-radius: 0; }
+.menu-item:focused { -fx-background-color: #ff4655; }
+.dialog-pane {
+    -fx-background-color: #ff4655, #0f1923; -fx-background-insets: 0, 3 0 0 0;
+}
+.dialog-pane > .header-panel .label, .dialog-pane .header-panel .label {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: #ffffff;
+}
+.device-dialog { -fx-background-color: #ff4655, #0f1923; -fx-background-insets: 0, 3 0 0 0; -fx-border-color: rgba(236,232,225,0.12); }
+.device-code-field { -fx-background-color: #0b1118; -fx-border-color: #ff4655; -fx-font-family: "Avero Display"; -fx-font-weight: bold; }
+
+/* ── Links / separators / tabs ───────────────────────────────────────── */
+.hyperlink, .card-link { -fx-text-fill: #ff4655; }
+.hyperlink:hover, .card-link:hover { -fx-text-fill: #ff5d6b; -fx-underline: true; }
+.separator:horizontal .line {
+    -fx-border-color: rgba(236,232,225,0.12) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-background-color: transparent;
+}
+.changelog-tabs .tab .tab-label { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: rgba(236,232,225,0.50); }
+.changelog-tabs .tab:selected .tab-label { -fx-text-fill: #ffffff; }
+.changelog-tabs .tab:selected { -fx-border-color: transparent transparent #ff4655 transparent; }
+
+/* ── V5.1 fixes ──────────────────────────────────────────────────────── */
+/* Icons are stroke-based line icons (see IconRegistry) — the old rules only set a fill, so
+   Settings / About / Accounts / the search glass rendered as solid blobs. */
+.nav-icon {
+    -fx-fill: transparent; -fx-stroke: rgba(236,232,225,0.55);
+    -fx-stroke-width: 1.8; -fx-stroke-line-cap: round; -fx-stroke-line-join: round;
+}
+.nav-icon-fill { -fx-fill: rgba(236,232,225,0.55); -fx-stroke: rgba(236,232,225,0.55); }
+.nav-button:hover .nav-icon { -fx-stroke: #ece8e1; }
+.nav-button:hover .nav-icon-fill { -fx-fill: #ece8e1; -fx-stroke: #ece8e1; }
+.nav-button:selected .nav-icon { -fx-fill: transparent; -fx-stroke: #ff4655; }
+.nav-button:selected .nav-icon-fill { -fx-fill: #ff4655; -fx-stroke: #ff4655; }
+.search-field-icon .nav-icon { -fx-stroke: rgba(236,232,225,0.60); -fx-stroke-width: 2; }
+
+/* The top-bar avatar had no size, so it collapsed to a thin sliver beside the name. */
+.account-chip .avatar-circle {
+    -fx-min-width: 38; -fx-pref-width: 38; -fx-max-width: 38;
+    -fx-min-height: 38; -fx-pref-height: 38; -fx-max-height: 38;
+}
+.avatar-initial { -fx-font-size: 21px; }
+
+/* ── V5.2 fixes ──────────────────────────────────────────────────────── */
+/* BUG: an old rule painted the checkmark on EVERY checkbox, so unchecked boxes looked ticked. */
+.check-box .mark { -fx-background-color: transparent; }
+.check-box:selected .mark { -fx-background-color: #ffffff; }
+
+/* Selected tab: dark tab, white text, red underline (the red block competed with the CTAs). */
+.play-tab-button:selected, .type-tab-button:selected {
+    -fx-background-color: #ff4655, #1b2733;
+    -fx-background-insets: 0, 0 0 3 0; -fx-background-radius: 0, 0;
+    -fx-text-fill: #ffffff;
+}
+
+/* Settings panels had no padding at all — titles and controls sat on the border. */
+.settings-panel { -fx-padding: 16 20 18 20; }
+
+/* Avero ID tile + any leftover ice-blue gradients -> red */
+.avero-brand-mark, .avero-avatar, .avero-brand-letter {
+    -fx-background-color: #ff4655; -fx-background-radius: 0;
+}
+.avero-brand-letter, .avero-brand-mark .label { -fx-text-fill: #ffffff; -fx-font-family: "Avero Display"; -fx-font-weight: bold; }
+
+/* Horizontal scrollbar was a fat grey bar across the bottom of the window */
+.scroll-bar:horizontal { -fx-pref-height: 8; -fx-background-color: transparent; }
+.scroll-bar:horizontal .track { -fx-background-color: transparent; -fx-border-color: transparent; }
+.scroll-bar:vertical { -fx-background-color: transparent; }
+.scroll-bar:vertical .track { -fx-background-color: transparent; -fx-border-color: transparent; }
+.hero-hint { -fx-text-fill: rgba(236,232,225,0.78); -fx-font-size: 14.5px; }
+
+/* ── V5.3 polish ─────────────────────────────────────────────────────── */
+.feature-card-title { -fx-font-size: 16px; }
+.changelog-tabs .tab { -fx-padding: 9 12 9 12; }
+.changelog-tabs .tab-container { -fx-padding: 0; }
+
+/* Spinner (Settings → concurrent downloads) */
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
+    -fx-background-color: #1b2733; -fx-background-insets: 0; -fx-background-radius: 0;
+    -fx-border-color: rgba(236,232,225,0.16); -fx-border-radius: 0;
+}
+.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover { -fx-background-color: #ff4655; }
+.spinner .increment-arrow, .spinner .decrement-arrow { -fx-background-color: #ece8e1; }
+
+/* ── V6: tracked small caps (tracking is baked into the font; JavaFX has no letter-spacing) ── */
+.card-title, .status-chip-title, .about-stat-title, .avero-section-label, .hero-eyebrow {
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold;
+}
+.brand-sublabel { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #ff4655; }
+
+/* ── V6: angular panels — hairline outline is a background layer so the cut corners keep it ── */
+.dashboard-card, .settings-section, .filters-panel, .mod-card, .modpack-card, .partner-card,
+.recommended-card, .cape-card, .about-stat-card {
+    -fx-background-color: rgba(236,232,225,0.11), #111b25;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+}
+.dashboard-card:hover, .mod-card:hover, .modpack-card:hover, .partner-card:hover,
+.recommended-card:hover, .cape-card:hover, .about-stat-card:hover {
+    -fx-background-color: #ff4655, #17232f;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+}
+.settings-section:hover, .filters-panel:hover { -fx-background-color: rgba(236,232,225,0.22), #111b25; -fx-background-insets: 0, 1; }
+.avero-auth-card, .ms-hero {
+    -fx-background-color: #ff4655, rgba(236,232,225,0.11), #121c27;
+    -fx-background-insets: 0, 3 0 0 0, 4 1 1 1;
+    -fx-background-radius: 0, 0, 0;
+}
+.status-chip { -fx-background-radius: 0; }
+
+/* ── V6: chrome with angular outlines (outline = background layer, so the cut corners keep it) ── */
+.search-field {
+    -fx-background-color: rgba(236,232,225,0.16), #0b1118; -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+}
+.search-field:hover { -fx-background-color: rgba(236,232,225,0.42), #0b1118; }
+.search-field:focus-within { -fx-background-color: #ff4655, #0b1118; }
+.account-chip {
+    -fx-background-color: rgba(236,232,225,0.16), #121d28; -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+}
+.account-chip:hover { -fx-background-color: #ff4655, #1b2632; }
+
+/* Nav: selected tab = solid red edge + dark-red wash, hover = soft wash */
+.nav-button:hover { -fx-background-color: rgba(236,232,225,0.06); }
+.nav-button:selected {
+    -fx-background-color: #ff4655, linear-gradient(to right, #34202a 0%, #14191f 55%, #0b1118 100%);
+    -fx-background-insets: 0, 0 0 0 3; -fx-background-radius: 0, 0;
+}
+.nav-indicator { -fx-background-color: transparent; }
+
+/* Section headings carry a red edge-marker */
+.section-header {
+    -fx-border-color: transparent transparent transparent #ff4655; -fx-border-width: 0 0 0 4; -fx-padding: 0 0 0 10;
+}
+.settings-panel .section-header, .settings-section .section-header { -fx-border-width: 0 0 0 4; }
+
+/* Hero tag */
+.hero-eyebrow { -fx-background-color: #ff4655; -fx-text-fill: #ffffff; -fx-padding: 3 14 3 12; -fx-font-size: 14px; }
+
+
+/* ── Update banner: calm dark bar, red accent edge, readable text ─────── */
+.update-banner-badge {
+    -fx-background-color: rgba(255,70,85,0.16);
+    -fx-border-color: rgba(255,70,85,0.55); -fx-border-width: 1; -fx-border-radius: 0;
+    -fx-background-radius: 0; -fx-padding: 3 9 3 9;
+    -fx-text-fill: #ff7782; -fx-font-size: 10.5px; -fx-font-weight: bold;
+}
+.update-banner-title {
+    -fx-text-fill: #f5f1ea; -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 15px;
+}
+.update-banner-summary { -fx-text-fill: rgba(236,232,225,0.72); -fx-font-size: 12px; }
+.update-banner-skip, .update-banner-skip:visited { -fx-text-fill: rgba(236,232,225,0.60); -fx-font-size: 11.5px; -fx-border-color: transparent; }
+.update-banner-skip:hover { -fx-text-fill: #ece8e1; -fx-underline: true; }
+.update-banner-progress-label { -fx-text-fill: rgba(236,232,225,0.72); -fx-font-size: 11.5px; }
+.update-banner-dismiss {
+    -fx-background-color: transparent; -fx-background-radius: 0; -fx-border-color: transparent;
+    -fx-text-fill: rgba(236,232,225,0.55); -fx-font-size: 14px; -fx-padding: 4 9 4 9; -fx-cursor: hand;
+}
+.update-banner-dismiss:hover { -fx-background-color: rgba(236,232,225,0.10); -fx-text-fill: #ffffff; }

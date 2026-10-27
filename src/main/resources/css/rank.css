@@ -1,0 +1,39 @@
+/* Global rank system (Ranks page, rank badge, toasts, Home card). Uses the shared -av-* tokens. */
+
+.rank-kicker   { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-mute; }
+.rank-hero-name{ -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 40px; }
+.rank-hero-tag { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.rank-ap       { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 24px; -fx-text-fill: -av-text; }
+.rank-ap-unit  { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-text-mute; }
+.rank-caption  { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.rank-caption-strong { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.rank-note     { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-mute; }
+
+.rank-bar-track { -fx-background-color: rgba(236,232,225,0.10); -fx-min-height: 8; -fx-pref-height: 8; -fx-max-height: 8; }
+.rank-bar-track-thin { -fx-min-height: 5; -fx-pref-height: 5; -fx-max-height: 5; }
+
+.rank-status      { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-dim;
+                    -fx-background-color: rgba(236,232,225,0.08); -fx-padding: 4 8 4 8; }
+.rank-status-ok   { -fx-text-fill: -av-ok;   -fx-background-color: rgba(94,201,122,0.14); }
+.rank-status-warn { -fx-text-fill: -av-warn; -fx-background-color: rgba(224,160,48,0.14); }
+
+.rank-quest        { -fx-background-color: -av-bg-2; -fx-border-color: -av-line; -fx-border-width: 1; -fx-padding: 12 16 12 16; }
+.rank-quest-done   { -fx-opacity: 0.62; }
+.rank-quest-title  { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: -av-text; }
+.rank-quest-desc   { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.rank-quest-prog   { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.rank-reward       { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-text;
+                     -fx-background-color: rgba(236,232,225,0.10); -fx-padding: 5 10 5 10; }
+.rank-reward-done  { -fx-text-fill: -av-ok; -fx-background-color: rgba(94,201,122,0.14); }
+
+.rank-ladder-name  { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-text; }
+.rank-ladder-range { -fx-font-family: "Barlow"; -fx-font-size: 11px; -fx-text-fill: -av-text-mute; }
+.rank-ladder-cell  { -fx-padding: 10 6 10 6; }
+.rank-ladder-locked{ -fx-opacity: 0.38; }
+
+.rank-pip-label    { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 9px; }
+
+.rank-toast        { -fx-background-color: -av-bg-3; -fx-border-color: -av-line-hot; -fx-border-width: 1; -fx-padding: 12 18 12 16;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 18, 0.2, 0, 6); }
+.rank-toast-title  { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 17px; -fx-text-fill: -av-text; }
+.rank-toast-sub    { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }

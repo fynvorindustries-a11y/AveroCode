@@ -1,0 +1,69 @@
+{
+  "version": 1,
+
+  "playtime": {
+    "minutesPerAp": 10,
+    "apPerBlock": 1,
+    "dailyCapAp": 18
+  },
+
+  "activity": {
+    "tickSeconds": 15,
+    "startupGraceSeconds": 90,
+    "idleThresholdSeconds": 300,
+    "backgroundGraceSeconds": 300,
+    "maxTickGapSeconds": 60,
+    "macroWindowMinutes": 120,
+    "macroMinGapSeconds": 10,
+    "systemProbeEnabled": false,
+    "sessionLimitMinutes": 120,
+    "unknownActivityPolicy": "ALLOW"
+  },
+
+  "ranks": [
+    { "id": "STONE",     "name": "Stone",     "minAp": 0,    "divisions": 3, "tagline": "The Beginning",         "accent": "#9aa3b0" },
+    { "id": "COPPER",    "name": "Copper",    "minAp": 500,  "divisions": 3, "tagline": "Growing Stronger",      "accent": "#e08a4f" },
+    { "id": "IRON",      "name": "Iron",      "minAp": 1500, "divisions": 3, "tagline": "Building Experience",   "accent": "#9db4d8" },
+    { "id": "GOLD",      "name": "Gold",      "minAp": 2500, "divisions": 3, "tagline": "Proven Skill",          "accent": "#f0b94a" },
+    { "id": "EMERALD",   "name": "Emerald",   "minAp": 3500, "divisions": 3, "tagline": "Advanced Player",       "accent": "#2fd9b0" },
+    { "id": "SAPPHIRE",  "name": "Sapphire",  "minAp": 4500, "divisions": 3, "tagline": "High Performance",      "accent": "#3d8bff" },
+    { "id": "AMETHYST",  "name": "Amethyst",  "minAp": 5500, "divisions": 3, "tagline": "Elite Status",          "accent": "#a855f7" },
+    { "id": "OBSIDIAN",  "name": "Obsidian",  "minAp": 6500, "divisions": 3, "tagline": "Exceptional Dedication","accent": "#ef4455" },
+    { "id": "CELESTIAL", "name": "Celestial", "minAp": 7500, "divisions": 0, "tagline": "The Ultimate Rank",     "accent": "#f6e2a8" }
+  ],
+
+  "quests": {
+    "dailyPerDay": 3,
+    "weeklyPerWeek": 3,
+    "definitions": [
+      { "id": "daily_warmup",   "type": "DAILY",  "objective": "PLAY_MINUTES",        "target": 20,  "rewardAp": 3,
+        "title": "Warm Up",        "description": "Play 20 minutes of verified playtime." },
+      { "id": "daily_hour",     "type": "DAILY",  "objective": "PLAY_MINUTES",        "target": 60,  "rewardAp": 4,
+        "title": "Hour of Power",  "description": "Play 60 minutes of verified playtime." },
+      { "id": "daily_session",  "type": "DAILY",  "objective": "SESSION_MINUTES",     "target": 45,  "rewardAp": 4,
+        "title": "Long Haul",      "description": "Stay active for one 45-minute session." },
+      { "id": "daily_server",   "type": "DAILY",  "objective": "PLAY_SERVER_MINUTES", "target": 20,  "rewardAp": 4,
+        "title": "Server Hopper",  "description": "Play 20 minutes on a server joined from the Servers page." },
+      { "id": "daily_sessions", "type": "DAILY",  "objective": "SESSIONS",            "target": 2,   "rewardAp": 3, "minMinutes": 10,
+        "title": "Back for More",  "description": "Play two separate sessions of 10+ minutes." },
+
+      { "id": "weekly_5h",      "type": "WEEKLY", "objective": "PLAY_MINUTES",        "target": 300, "rewardAp": 20,
+        "title": "Five Hour Week", "description": "Play 5 hours of verified playtime this week." },
+      { "id": "weekly_server",  "type": "WEEKLY", "objective": "PLAY_SERVER_MINUTES", "target": 120, "rewardAp": 20,
+        "title": "Community Regular","description": "Play 2 hours on servers joined from the Servers page." },
+      { "id": "weekly_sessions","type": "WEEKLY", "objective": "SESSIONS",            "target": 5,   "rewardAp": 15, "minMinutes": 10,
+        "title": "Showing Up",     "description": "Play five sessions of 10+ minutes this week." },
+      { "id": "weekly_marathon","type": "WEEKLY", "objective": "SESSION_MINUTES",     "target": 90,  "rewardAp": 15,
+        "title": "Marathon",       "description": "Stay active for one 90-minute session." },
+
+      { "id": "special_first_steps", "type": "SPECIAL", "objective": "PLAY_MINUTES",        "target": 30,   "rewardAp": 20,
+        "title": "First Steps",    "description": "Complete your first 30 minutes of verified playtime." },
+      { "id": "special_link_microsoft","type": "SPECIAL","objective": "LINK_MICROSOFT",     "target": 1,    "rewardAp": 25,
+        "title": "Verified Player","description": "Link a Microsoft account to your Avero ID." },
+      { "id": "special_explorer",    "type": "SPECIAL", "objective": "PLAY_SERVER_MINUTES", "target": 600,  "rewardAp": 40,
+        "title": "Server Explorer","description": "Play 10 hours on servers joined from the Servers page." },
+      { "id": "special_century",     "type": "SPECIAL", "objective": "PLAY_MINUTES",        "target": 6000, "rewardAp": 100,
+        "title": "Century Club",   "description": "Reach 100 hours of verified playtime." }
+    ]
+  }
+}

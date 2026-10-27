@@ -1,0 +1,82 @@
+/* ============================================================================
+   Avero Launcher — components.css  (design system, part 2 of 2)
+   Shared component classes built only from tokens.css. Loaded AFTER dark-theme.css so it wins at
+   equal specificity; every state (hover / armed / disabled) is defined for every button kind so the
+   legacy .button:hover rules can't leak through.
+   ============================================================================ */
+
+/* ── Buttons (AvButton) ───────────────────────────────────────────────── */
+.av-btn {
+    -fx-font-family: "Avero Display";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+.av-btn:disabled { -fx-opacity: 1; -fx-cursor: default; }
+
+/* Primary — the one orange-to-red action per screen (rounded pill, mix runs left to right) */
+.av-btn-primary                { -fx-background-color: linear-gradient(to right, #ffb43a, #ff7a1f 32%, #ff4a2c 62%, #d9232f); -fx-background-radius: 14; -fx-text-fill: #ffffff; }
+.av-btn-primary:hover          { -fx-background-color: linear-gradient(to right, #ffc761, #ff9640 32%, #ff6c4c 62%, #e8414a); -fx-background-radius: 14; -fx-text-fill: #ffffff; }
+.av-btn-primary:armed          { -fx-background-color: linear-gradient(to right, #d8902e, #d8582c 40%, #c42c38); -fx-background-radius: 14; -fx-text-fill: #ffffff; }
+.av-btn-primary:disabled       { -fx-background-color: rgba(255,122,61,0.30); -fx-background-radius: 14; -fx-text-fill: rgba(255,255,255,0.55); }
+
+/* Ghost — secondary actions: hairline outline as a background layer so the chamfer keeps it */
+.av-btn-ghost {
+    -fx-background-color: -av-line-2, -av-bg-2;
+    -fx-background-insets: 0, 1;
+    -fx-text-fill: -av-text;
+}
+.av-btn-ghost:hover    { -fx-background-color: -av-line-hot, -av-bg-3; -fx-background-insets: 0, 1; -fx-text-fill: #ffffff; }
+.av-btn-ghost:armed    { -fx-background-color: -av-line-hot, -av-bg-4; -fx-background-insets: 0, 1; }
+.av-btn-ghost:disabled { -fx-background-color: -av-line, -av-bg-2; -fx-background-insets: 0, 1; -fx-text-fill: -av-text-mute; }
+
+/* Play — the big one (glow is a separate node pulsed by Motion.pulse); rounded pill, mix runs left to right */
+.av-btn-play                { -fx-background-color: linear-gradient(to right, #ffb43a, #ff7a1f 32%, #ff4a2c 62%, #d9232f); -fx-background-radius: 18; -fx-text-fill: #ffffff; -fx-font-size: 24px; -fx-padding: 16 48 16 48; }
+.av-btn-play:hover          { -fx-background-color: linear-gradient(to right, #ffc761, #ff9640 32%, #ff6c4c 62%, #e8414a); -fx-background-radius: 18; -fx-text-fill: #ffffff; }
+.av-btn-play:armed          { -fx-background-color: linear-gradient(to right, #d8902e, #d8582c 40%, #c42c38); -fx-background-radius: 18; -fx-text-fill: #ffffff; }
+.av-btn-play:disabled       { -fx-background-color: rgba(255,122,61,0.28); -fx-background-radius: 18; -fx-text-fill: rgba(255,255,255,0.50); }
+
+.av-btn-sheen { -fx-fill: rgba(255,255,255,0.20); }
+
+/* Keyboard focus ring (only after a keyboard key — see FocusRing) */
+.root:kbd .av-btn:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* ── Cards (Card) ─────────────────────────────────────────────────────── */
+.av-card-host { -fx-background-color: transparent; }
+.av-card {
+    -fx-background-color: -av-line, -av-bg-2;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0;
+}
+.av-card-hot:hover   { -fx-background-color: -av-line-hot, -av-bg-3; -fx-background-insets: 0, 1; }
+.av-card-active      { -fx-background-color: -av-accent, -av-bg-3;   -fx-background-insets: 0, 1; }
+.av-card-notch       { -fx-background-color: -av-accent; }
+
+/* ── Page header (PageHeader) ─────────────────────────────────────────── */
+.av-page-header {
+    -fx-padding: 0 0 16 0;
+    -fx-border-color: transparent transparent -av-line transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.av-page-title { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 30px; -fx-text-fill: -av-text; }
+.av-page-sub   { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-dim; }
+.av-slash      { -fx-background-color: -av-accent; }
+
+/* ── Skeleton ─────────────────────────────────────────────────────────── */
+.av-skeleton      { -fx-background-color: rgba(236,232,225,0.06); }
+.av-skeleton-band { -fx-background-color: linear-gradient(to right, rgba(236,232,225,0.0), rgba(236,232,225,0.09), rgba(236,232,225,0.0)); }
+
+/* ── Empty / error state ──────────────────────────────────────────────── */
+.av-empty-title { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-text; }
+.av-empty-body  { -fx-font-family: "Barlow"; -fx-font-size: 14px; -fx-text-fill: -av-text-dim; }
+.av-empty-icon  { -fx-fill: -av-text-mute; }
+
+/* ── Step progress ────────────────────────────────────────────────────── */
+.av-progress-step  { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -av-text; }
+.av-progress-pct   { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.av-progress-track { -fx-background-color: rgba(236,232,225,0.10); -fx-min-height: 4; -fx-pref-height: 4; -fx-max-height: 4; }
+.av-progress-fill  { -fx-background-color: linear-gradient(to right, -av-accent, -av-accent-hot); }

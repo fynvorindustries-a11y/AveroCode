@@ -1,0 +1,67 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group = 'com.averolauncher'
+// Bump this for every release — it's the version the auto-update system compares
+// against the tags published at https://github.com/fynvorindustries-a11y/AveroLauncher/releases,
+// and it's injected into version.properties (see processResources below) so
+// AppVersion.CURRENT always matches whatever was actually built.
+version = '4.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+javafx {
+    version = '21.0.2'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.graphics']
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
+    // WebP decoding for ImageIO — Modrinth serves most project icons as WebP, which JavaFX can't read.
+    // Pure-Java plugin (no native libraries to load, unlike the older sejda one).
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
+    implementation 'org.slf4j:slf4j-api:2.0.13'
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+application {
+    mainClass = 'com.averolauncher.AveroLauncherApplication'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Stamps the real project version into version.properties on the classpath so
+// com.averolauncher.update.AppVersion.CURRENT is always accurate — see the
+// comment on `version` above and version.properties itself.
+processResources {
+    filesMatching('version.properties') {
+        expand(version: project.version)
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Ensures module-path launch works correctly with JavaFX plugin on all platforms
+tasks.named('run') {
+    jvmArgs = ['-Dfile.encoding=UTF-8']
+    // `gradlew run -Davero.store.api=http://localhost:8787/api/v1` -> forwarded to the launcher JVM
+    def storeApi = System.getProperty('avero.store.api')
+    if (storeApi) { systemProperty 'avero.store.api', storeApi }
+}

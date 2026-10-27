@@ -1,0 +1,1638 @@
+package com.averolauncher.ui.pages;
+
+import com.averolauncher.model.LauncherSettings;
+import com.averolauncher.ui.NavPage;
+import javafx.animation.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Consumer;
+
+/**
+ * Home page — redesigned with:
+ *   - Taller hero (280px), original Avero blue palette, richer content
+ *   - Smoother cubic-bezier cascade animations with correct easing
+ *   - "Pulse" glow on the CTA button when ready-to-play
+ *   - Activity card with animated scroll, inline status dots
+ *   - Profile card with richer presence detail
+ *   - Parallax-lite hero shift on layout-bounds change
+ *   - Cleaner Quick-Stats row with micro-icons and tooltip-style hover
+ *   - Feature cards with icon shimmer on hover
+ */
+public class HomePage {
+
+    // ── Avero brand palette ────────────────────────────────────────────────
+    private static final String ACCENT_BLUE   = "#7fc2e0";
+    private static final String ACCENT_BLUE_D = "#4f9bc4";
+    private static final String ACCENT_VIOLET = "#9b8cf2";
+    private static final String ACCENT_GREEN  = "#7ed957";
+    private static final String ACCENT_RED    = "#e87070";
+    private static final String ACCENT_AMBER  = "#e8a838";
+
+    private final LauncherSettings settings;
+    private final Consumer<NavPage> navigator;
+    private final com.averolauncher.repository.AccountRepository accountRepository;
+
+    public HomePage(LauncherSettings settings, Consumer<NavPage> navigator,
+                    com.averolauncher.repository.AccountRepository accountRepository) {
+        this.settings = settings;
+        this.navigator = navigator;
+        this.accountRepository = accountRepository;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Root build
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public VBox build() {
+        VBox root = new VBox(20);
+        root.getStyleClass().add("home-page");
+        root.setPadding(new Insets(0, 24, 28, 24));
+        VBox.setVgrow(root, Priority.ALWAYS);
+
+        Node hero         = buildHero();
+        Node quickActions = buildQuickActionsRow();
+        Node quickStats   = buildQuickStats();
+        Node features     = buildFeatureHighlights();
+        VBox bottomRow    = buildBottomRow();
+        VBox.setVgrow(bottomRow, Priority.ALWAYS);
+
+        root.getChildren().addAll(hero, quickActions, quickStats, features, bottomRow);
+
+        // Staggered cascade — each section arrives 80 ms after the previous
+        if (animationsAllowed()) {
+            fadeInCascade(hero,         0);
+            fadeInCascade(quickActions, 1);
+            fadeInCascade(quickStats,   2);
+            fadeInCascade(features,     3);
+            fadeInCascade(bottomRow,    4);
+        }
+
+        return root;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Hero banner  (taller: 280 px, original Avero blue/icy palette)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private static final double HERO_HEIGHT = 340; // taller hero, per request — was 280
+
+    private StackPane buildHero() {
+        StackPane hero = new StackPane();
+        hero.getStyleClass().add("hero-banner");
+        // Fully fixed size (pref == min == max), not just a min/pref pair. The old
+        // version only set pref/min, so the pane's actual rendered height depended
+        // on its managed children's own preferred sizes — and the background photo's
+        // fitHeight was bound back to hero.heightProperty(), a self-referential loop
+        // that made the banner size/crop unpredictably. Locking the pane's size here
+        // and driving the photo from this constant (see buildHeroBackgroundPhoto)
+        // breaks that loop for good.
+        hero.setPrefHeight(HERO_HEIGHT);
+        hero.setMinHeight(HERO_HEIGHT);
+        hero.setMaxHeight(HERO_HEIGHT);
+
+        boolean mcDirExists = settings.minecraftDirectory != null
+                && Files.exists(Path.of(settings.minecraftDirectory));
+        boolean versionSet = settings.defaultVersionId != null && !settings.defaultVersionId.isBlank();
+        String  versionLabel = versionSet ? settings.defaultVersionId : null;
+        boolean readyToPlay  = mcDirExists && versionSet;
+
+        // ── Background gradient (Avero ice-blue, no terracotta) ─────────────
+        // Always painted first so the hero is never blank — a bundled
+        // hero-background.jpg (below) is layered on top of this, not instead of it.
+        Region bg = new Region();
+        bg.setMouseTransparent(true);
+        bg.prefWidthProperty().bind(hero.widthProperty());
+        bg.prefHeightProperty().bind(hero.heightProperty());
+        bg.setStyle(
+            "-fx-background-color: linear-gradient(135deg, " +
+            "#0b1826 0%, #0d2035 30%, #0f2a42 60%, #122d47 80%, #0b1826 100%);"
+        );
+
+        // ── Bundled hero photo (/images/hero-background.jpg), "cover"-fit ───
+        // Same never-crash contract as every other image in this app: if the file
+        // isn't on the classpath yet, this quietly contributes nothing and the
+        // gradient above is all that shows. Clipped to the hero's own rounded
+        // corners so it can never spill past the banner.
+        Node heroPhoto = buildHeroBackgroundPhoto(hero, HERO_HEIGHT);
+
+        // Subtle animated shimmer stripe (a narrow semi-transparent strip that
+        // drifts across the hero, giving depth without a video/gif).
+        Region shimmer = new Region();
+        shimmer.setMouseTransparent(true);
+        shimmer.setManaged(false);
+        shimmer.setPrefSize(120, 600);
+        shimmer.setStyle(
+            "-fx-background-color: linear-gradient(to right," +
+            " rgba(127,194,224,0.0) 0%," +
+            " rgba(127,194,224,0.06) 50%," +
+            " rgba(127,194,224,0.0) 100%);" +
+            "-fx-rotate: 20;"
+        );
+        if (animationsAllowed()) {
+            TranslateTransition shimmerAnim = new TranslateTransition(Duration.seconds(4.5), shimmer);
+            shimmerAnim.setFromX(-200);
+            shimmerAnim.setToX(1600);
+            shimmerAnim.setCycleCount(Animation.INDEFINITE);
+            shimmerAnim.setInterpolator(Interpolator.LINEAR);
+            shimmerAnim.play();
+        }
+
+        // Left-to-right gradient scrim — stronger left fade for legibility
+        Region scrim = new Region();
+        scrim.setMouseTransparent(true);
+        scrim.prefWidthProperty().bind(hero.widthProperty());
+        scrim.prefHeightProperty().bind(hero.heightProperty());
+        scrim.setStyle(
+            "-fx-background-color: linear-gradient(to right," +
+            " rgba(8,10,14,0.82) 0%," +
+            " rgba(8,10,14,0.55) 38%," +
+            " rgba(8,10,14,0.15) 68%," +
+            " rgba(8,10,14,0.0)  85%);"
+        );
+
+        // ── Content ──────────────────────────────────────────────────────────
+        HBox content = new HBox(28);
+        content.setAlignment(Pos.CENTER_LEFT);
+        content.setPadding(new Insets(34, 40, 34, 40));
+
+        VBox welcome = new VBox(10);
+        welcome.setAlignment(Pos.CENTER_LEFT);
+
+        // Small eyebrow
+        Label eyebrow = new Label("AVERO LAUNCHER");
+        eyebrow.getStyleClass().add("hero-eyebrow");
+        eyebrow.setStyle(
+            "-fx-text-fill: " + ACCENT_BLUE + ";" +
+            "-fx-letter-spacing: 2;"
+        );
+
+        // Main greeting
+        Label greeting = new Label("Welcome back");
+        greeting.getStyleClass().add("hero-greeting");
+        greeting.setStyle("-fx-font-size: 32px; -fx-font-weight: bold;");
+        greeting.setMinWidth(Region.USE_PREF_SIZE);
+
+        // Sub text
+        String subText;
+        if (readyToPlay) {
+            subText = "Everything's set up — jump straight into " + versionLabel + ".";
+        } else if (!mcDirExists) {
+            subText = "Set your Minecraft directory in Settings to get started.";
+        } else {
+            subText = "Pick a default version and you'll be ready to launch.";
+        }
+        Label sub = new Label(subText);
+        sub.getStyleClass().add("hero-hint");
+        sub.setStyle("-fx-font-size: 13.5px; -fx-opacity: 0.82;");
+        sub.setWrapText(true);
+        sub.setMaxWidth(440);
+
+        // Build order: eyebrow → greeting+badge → sub
+        com.averolauncher.model.Account active = resolveActiveAccount();
+        welcome.getChildren().add(eyebrow);
+        if (active != null) {
+            Label accountBadge2 = new Label("  \u25B6  " + active.username);
+            accountBadge2.setStyle(
+                "-fx-background-color: rgba(127,194,224,0.15);" +
+                "-fx-background-radius: 6;" +
+                "-fx-text-fill: " + ACCENT_BLUE + ";" +
+                "-fx-font-size: 11px; -fx-font-weight: bold;" +
+                "-fx-padding: 2 8 2 8;"
+            );
+            HBox greetingRow = new HBox(12, greeting, accountBadge2);
+            greetingRow.setAlignment(Pos.BOTTOM_LEFT);
+            welcome.getChildren().add(greetingRow);
+        } else {
+            welcome.getChildren().add(greeting);
+        }
+        welcome.getChildren().add(sub);
+
+        // Extra hero detail row (version + platform info)
+        if (readyToPlay) {
+            HBox detailRow = new HBox(16);
+            detailRow.setAlignment(Pos.CENTER_LEFT);
+            detailRow.setPadding(new Insets(6, 0, 0, 0));
+            detailRow.getChildren().addAll(
+                heroBadge("\u25B6", "MC " + versionLabel, ACCENT_BLUE),
+                heroBadge("\uD83D\uDEE1", "Secure Auth", ACCENT_GREEN),
+                heroBadge("\u26A1", "Ready", ACCENT_GREEN)
+            );
+            welcome.getChildren().add(detailRow);
+        }
+
+        HBox.setHgrow(welcome, Priority.ALWAYS);
+        welcome.setMaxWidth(Double.MAX_VALUE);
+
+        // ── CTA button ───────────────────────────────────────────────────────
+        Button ctaButton;
+        if (readyToPlay) {
+            ctaButton = new Button(versionLabel.toUpperCase());
+            ctaButton.setOnAction(e -> navigator.accept(NavPage.PLAY));
+            applyButtonBackgroundImage(ctaButton, "/images/b.png");
+            // Pulsing glow when ready-to-play — chained via setInput() onto
+            // whatever effect applyButtonBackgroundImage already set (the
+            // text-legibility shadow), rather than replacing it outright:
+            // setEffect() always overwrites, so calling it a second time
+            // with a bare new DropShadow would have silently erased that
+            // text shadow the moment the background image loaded.
+            if (animationsAllowed()) {
+                DropShadow pulse = new DropShadow(18, Color.web(ACCENT_BLUE, 0.0));
+                pulse.setInput(ctaButton.getEffect());
+                ctaButton.setEffect(pulse);
+                Timeline pulseAnim = new Timeline(
+                    new KeyFrame(Duration.ZERO,       new KeyValue(pulse.colorProperty(), Color.web(ACCENT_BLUE, 0.0))),
+                    new KeyFrame(Duration.millis(900), new KeyValue(pulse.colorProperty(), Color.web(ACCENT_BLUE, 0.75))),
+                    new KeyFrame(Duration.millis(1800),new KeyValue(pulse.colorProperty(), Color.web(ACCENT_BLUE, 0.0)))
+                );
+                pulseAnim.setCycleCount(Animation.INDEFINITE);
+                pulseAnim.play();
+            }
+        } else if (!mcDirExists) {
+            ctaButton = new Button("OPEN SETTINGS");
+            ctaButton.setOnAction(e -> navigator.accept(NavPage.SETTINGS));
+        } else {
+            ctaButton = new Button("CHOOSE VERSION");
+            ctaButton.setOnAction(e -> navigator.accept(NavPage.VERSIONS));
+        }
+        ctaButton.getStyleClass().add("hero-play-button");
+        if (!mcDirExists) ctaButton.getStyleClass().add("hero-setup-button");
+        else if (!versionSet) ctaButton.getStyleClass().add("hero-choose-version-button");
+        if (readyToPlay) {
+            // Previously this button had no explicit size at all, so it just
+            // shrink-wrapped to whatever "1.13.1" needed at the base .button
+            // padding (8x16) — a tiny pill, which is why the background image
+            // rendered as a postage-stamp instead of looking like a button.
+            // Sized wider/taller again here (was 190x68) to actually show
+            // off a badge-style graphic rather than crop it down further.
+            ctaButton.setMinSize(260, 96);
+            ctaButton.setPrefSize(260, 96);
+            ctaButton.setAlignment(Pos.CENTER);
+        }
+
+        content.getChildren().addAll(welcome, ctaButton);
+        StackPane.setAlignment(content, Pos.CENTER_LEFT);
+
+        if (heroPhoto != null) {
+            hero.getChildren().addAll(bg, heroPhoto, shimmer, scrim, content);
+        } else {
+            hero.getChildren().addAll(bg, shimmer, scrim, content);
+        }
+
+        // Rounded bottom corners via clip
+        Rectangle heroClip = new Rectangle();
+        heroClip.setArcWidth(20);
+        heroClip.setArcHeight(20);
+        heroClip.widthProperty().bind(hero.widthProperty());
+        heroClip.heightProperty().bind(hero.heightProperty());
+        hero.setClip(heroClip);
+
+        // Outer glow
+        DropShadow heroGlow = new DropShadow(28, Color.web(ACCENT_BLUE, 0.18));
+        heroGlow.setOffsetY(6);
+        hero.setEffect(heroGlow);
+
+        return hero;
+    }
+
+    /** Small inline badge used in the hero detail row. */
+    private HBox heroBadge(String icon, String text, String hex) {
+        HBox badge = new HBox(5);
+        badge.setAlignment(Pos.CENTER_LEFT);
+        badge.setPadding(new Insets(3, 9, 3, 9));
+        badge.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.07);" +
+            "-fx-background-radius: 6;" +
+            "-fx-border-color: rgba(255,255,255,0.12);" +
+            "-fx-border-radius: 6; -fx-border-width: 1;"
+        );
+        Label i = new Label(icon);
+        i.setStyle("-fx-font-size: 10px;");
+        Label t = new Label(text);
+        t.setStyle("-fx-font-size: 11px; -fx-text-fill: " + hex + "; -fx-font-weight: bold;");
+        badge.getChildren().addAll(i, t);
+        return badge;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Quick actions
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private HBox buildQuickActionsRow() {
+        HBox row = new HBox(14);
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        HBox tip = buildGettingStartedTip();
+        HBox.setHgrow(tip, Priority.ALWAYS);
+        tip.setMaxWidth(Double.MAX_VALUE);
+
+        int serverCount = settings.savedServers != null ? settings.savedServers.size() : 0;
+        HBox serversPill = quickActionPill("\uD83D\uDCE1", "My Servers",
+                serverCount > 0 ? serverCount + " saved" : "Add a server",
+                ACCENT_BLUE, () -> navigator.accept(NavPage.SERVERS));
+        HBox modsPill = quickActionPill("\uD83E\uDDE9", "Browse Mods", "Modrinth",
+                ACCENT_VIOLET, () -> navigator.accept(NavPage.MODS));
+
+        row.getChildren().addAll(tip, serversPill, modsPill);
+        return row;
+    }
+
+    private HBox buildGettingStartedTip() {
+        boolean mcDirExists = settings.minecraftDirectory != null
+                && Files.exists(Path.of(settings.minecraftDirectory));
+        boolean versionSet = settings.defaultVersionId != null && !settings.defaultVersionId.isBlank();
+
+        String eyebrowText, bodyText;
+        NavPage target;
+        if (!mcDirExists) {
+            eyebrowText = "GET STARTED";
+            bodyText = "Set your Minecraft directory in Settings to unlock launching.";
+            target = NavPage.SETTINGS;
+        } else if (!versionSet) {
+            eyebrowText = "ALMOST READY";
+            bodyText = "Choose a default version to enable one-click launching from the hero.";
+            target = NavPage.VERSIONS;
+        } else {
+            eyebrowText = "DID YOU KNOW?";
+            bodyText = "Browse and install curated Modrinth modpacks directly from the Mods tab.";
+            target = NavPage.MODS;
+        }
+
+        HBox tip = new HBox(14);
+        tip.getStyleClass().add("dashboard-card");
+        tip.setAlignment(Pos.CENTER_LEFT);
+        tip.setPadding(new Insets(15, 20, 15, 16));
+        tip.setCursor(javafx.scene.Cursor.HAND);
+        tip.setStyle(
+            "-fx-border-color: rgba(127,194,224,0.32);" +
+            "-fx-border-width: 1;" +
+            "-fx-border-radius: 12;" +
+            "-fx-background-radius: 12;" +
+            "-fx-background-color: linear-gradient(to right, rgba(127,194,224,0.09), rgba(127,194,224,0.02));"
+        );
+
+        StackPane iconPane = new StackPane(new Label("\uD83D\uDCA1"));
+        iconPane.setMinSize(38, 38);
+        iconPane.setMaxSize(38, 38);
+        iconPane.setStyle(
+            "-fx-background-color: rgba(127,194,224,0.18);" +
+            "-fx-background-radius: 10;"
+        );
+
+        VBox textCol = new VBox(2);
+        Label eyebrow = new Label(eyebrowText);
+        eyebrow.getStyleClass().add("hero-eyebrow");
+        Label body = new Label(bodyText);
+        body.getStyleClass().add("partner-desc");
+        body.setWrapText(true);
+        body.setMaxWidth(Double.MAX_VALUE);
+        textCol.getChildren().addAll(eyebrow, body);
+        HBox.setHgrow(textCol, Priority.ALWAYS);
+
+        Label arrow = new Label("\u2192");
+        arrow.setStyle("-fx-font-size: 16px; -fx-text-fill: " + ACCENT_BLUE + "; -fx-font-weight: bold;");
+
+        tip.getChildren().addAll(iconPane, textCol, arrow);
+        tip.setOnMouseClicked(e -> navigator.accept(target));
+        attachHoverGrow(tip);
+        return tip;
+    }
+
+    private HBox quickActionPill(String emoji, String label, String detail, String hex, Runnable onClick) {
+        HBox pill = new HBox(10);
+        pill.getStyleClass().add("dashboard-card");
+        pill.setAlignment(Pos.CENTER_LEFT);
+        pill.setPadding(new Insets(13, 18, 13, 14));
+        pill.setCursor(javafx.scene.Cursor.HAND);
+        pill.setPrefWidth(172);
+        pill.setStyle(
+            "-fx-border-color: derive(" + hex + ", -35%);" +
+            "-fx-border-width: 1;" +
+            "-fx-border-radius: 12;" +
+            "-fx-background-radius: 12;"
+        );
+
+        StackPane iconPane = new StackPane(new Label(emoji));
+        iconPane.setMinSize(34, 34);
+        iconPane.setMaxSize(34, 34);
+        iconPane.setStyle("-fx-background-color: derive(" + hex + ", -60%); -fx-background-radius: 9;");
+        ((Label) iconPane.getChildren().get(0)).setStyle("-fx-font-size: 15px;");
+
+        VBox textCol = new VBox(1);
+        Label l = new Label(label);
+        l.getStyleClass().add("partner-name");
+        l.setStyle("-fx-font-size: 12.5px;");
+        Label d = new Label(detail);
+        d.setStyle("-fx-font-size: 10px; -fx-text-fill: rgba(255,255,255,0.52);");
+        textCol.getChildren().addAll(l, d);
+
+        pill.getChildren().addAll(iconPane, textCol);
+        pill.setOnMouseClicked(e -> onClick.run());
+        attachHoverGrow(pill);
+        return pill;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Quick-stat chips — now with coloured dot indicators
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private HBox buildQuickStats() {
+        HBox row = new HBox(14);
+
+        String versionLabel = settings.defaultVersionId != null ? settings.defaultVersionId : "None set";
+        com.averolauncher.model.Account active = resolveActiveAccount();
+        String accountLabel = active != null ? active.username : "Not signed in";
+        int    serverCount  = settings.savedServers != null ? settings.savedServers.size() : 0;
+
+        HBox versionChip  = statChip("MC VERSION",      "\u25B6 " + versionLabel,        "\uD83C\uDFAE", settings.defaultVersionId != null, ACCENT_BLUE);
+        HBox accountChip  = statChip("ACCOUNT",          accountLabel,                    "\uD83D\uDC64", active != null, ACCENT_VIOLET);
+        HBox serverChip   = statChip("SAVED SERVERS",    String.valueOf(serverCount),      "\uD83D\uDCE1", serverCount > 0, ACCENT_BLUE);
+        HBox securityChip = statChip("SECURITY",          "Protected \u2714",             "\uD83D\uDD10", true, ACCENT_GREEN);
+
+        for (HBox chip : new HBox[]{versionChip, accountChip, serverChip, securityChip}) {
+            HBox.setHgrow(chip, Priority.ALWAYS);
+            chip.setMaxWidth(Double.MAX_VALUE);
+        }
+
+        row.getChildren().addAll(versionChip, accountChip, serverChip, securityChip);
+        return row;
+    }
+
+    private HBox statChip(String label, String value, String icon, boolean ok, String accentHex) {
+        HBox chip = new HBox(12);
+        chip.getStyleClass().add("status-chip");
+        chip.setAlignment(Pos.CENTER_LEFT);
+        chip.setPadding(new Insets(13, 16, 13, 14));
+        // Each chip's identity color (blue for version, violet for account,
+        // green for security, ...) comes from accentHex — previously this was
+        // ignored entirely and every chip got the same solid status-ok/warn
+        // green/amber fill regardless of which stat it represented, which is
+        // why all four looked identical. The ok/warn distinction now lives
+        // only in the small dot below, where it belongs.
+        chip.setStyle(
+            "-fx-border-color: derive(" + accentHex + ", -30%);" +
+            "-fx-border-width: 1;" +
+            "-fx-border-radius: 12;" +
+            "-fx-background-radius: 12;" +
+            "-fx-background-color: linear-gradient(160deg, derive(" + accentHex + ", -72%) 0%, rgba(18,32,50,0.55) 100%);"
+        );
+
+        // Status dot — genuinely ok/warn, independent of the chip's accent identity
+        StackPane dot = new StackPane();
+        dot.setMinSize(7, 7);
+        dot.setMaxSize(7, 7);
+        String dotColor = ok ? ACCENT_GREEN : ACCENT_AMBER;
+        dot.setStyle("-fx-background-color: " + dotColor + "; -fx-background-radius: 4;");
+        if (ok && animationsAllowed()) {
+            DropShadow dotGlow = new DropShadow(5, Color.web(dotColor, 0.9));
+            dot.setEffect(dotGlow);
+        }
+
+        VBox text = new VBox(2);
+        HBox labelRow = new HBox(6);
+        labelRow.setAlignment(Pos.CENTER_LEFT);
+        Label iconLbl = new Label(icon);
+        iconLbl.setStyle("-fx-font-size: 10px;");
+        Label l = new Label(label);
+        l.getStyleClass().add("status-chip-title");
+        labelRow.getChildren().addAll(iconLbl, l);
+
+        Label v = new Label(value);
+        v.getStyleClass().add("status-chip-detail");
+        v.setStyle("-fx-font-weight: bold; -fx-text-fill: " + accentHex + ";");
+        text.getChildren().addAll(labelRow, v);
+
+        chip.getChildren().addAll(dot, text);
+        attachHoverGrow(chip);
+        return chip;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Feature highlights
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private VBox buildFeatureHighlights() {
+        VBox section = new VBox(14);
+
+        Label title = new Label("WHY AVERO");
+        title.getStyleClass().add("card-title");
+
+        Region line = new Region();
+        line.setPrefSize(46, 3);
+        line.setMaxSize(46, 3);
+        line.setStyle(
+            "-fx-background-color: linear-gradient(to right, " + ACCENT_BLUE_D + ", " + ACCENT_BLUE + ", #e8f4f8);" +
+            "-fx-background-radius: 3;"
+        );
+        VBox headerBlock = new VBox(6, title, line);
+
+        HBox grid = new HBox(14);
+        grid.setAlignment(Pos.TOP_LEFT);
+
+        VBox f1 = featureCard("\u26A1", "Instant Launch",
+                "No bloated updater — jump straight into your last profile in seconds.",
+                ACCENT_BLUE);
+        VBox f2 = featureCard("\uD83E\uDDE9", "One-Click Modpacks",
+                "Search and install Modrinth mods and modpacks without leaving the launcher.",
+                ACCENT_VIOLET);
+        VBox f3 = featureCard("\uD83D\uDD10", "Secure Microsoft Sign-In",
+                "Official OAuth login — Avero never sees or stores your password.",
+                ACCENT_GREEN);
+        VBox f4 = featureCard("\uD83C\uDF10", "Built-in Server Browser",
+                "Save favourites, ping servers, and jump in — no external tools.",
+                ACCENT_RED);
+
+        for (VBox f : new VBox[]{f1, f2, f3, f4}) {
+            HBox.setHgrow(f, Priority.ALWAYS);
+            f.setMaxWidth(Double.MAX_VALUE);
+            grid.getChildren().add(f);
+        }
+
+        section.getChildren().addAll(headerBlock, grid);
+        return section;
+    }
+
+    private VBox featureCard(String emoji, String title, String desc, String accentHex) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("dashboard-card");
+        card.setPadding(new Insets(18));
+        card.setMaxWidth(Double.MAX_VALUE);
+        card.setStyle(
+            "-fx-border-color: derive(" + accentHex + ", -38%);" +
+            "-fx-border-width: 1;" +
+            "-fx-border-radius: 12;" +
+            "-fx-background-radius: 12;"
+        );
+
+        StackPane iconPane = new StackPane();
+        iconPane.setMinSize(42, 42);
+        iconPane.setPrefSize(42, 42);
+        iconPane.setMaxSize(42, 42);
+        iconPane.setStyle(
+            "-fx-background-color: derive(" + accentHex + ", -60%);" +
+            "-fx-background-radius: 11;"
+        );
+        Label icon = new Label(emoji);
+        icon.setStyle("-fx-font-size: 18px;");
+        iconPane.getChildren().add(icon);
+
+        // Hover shimmer on icon
+        if (animationsAllowed()) {
+            card.setOnMouseEntered(e -> {
+                DropShadow glow = new DropShadow(14, Color.web(accentHex, 0.5));
+                iconPane.setEffect(glow);
+            });
+            card.setOnMouseExited(e -> iconPane.setEffect(null));
+        }
+
+        Label titleLabel = new Label(title);
+        titleLabel.getStyleClass().add("feature-card-title");
+
+        Label descLabel = new Label(desc);
+        descLabel.getStyleClass().add("feature-card-desc");
+        descLabel.setWrapText(true);
+        descLabel.setMaxWidth(Double.MAX_VALUE);
+
+        card.getChildren().addAll(iconPane, titleLabel, descLabel);
+        attachHoverGrow(card);
+        return card;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bottom row: activity + profile sidebar + partner cards
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private VBox buildBottomRow() {
+        HBox row = new HBox(20);
+        row.setAlignment(Pos.TOP_LEFT);
+        VBox.setVgrow(row, Priority.ALWAYS);
+
+        VBox activity = buildActivityCard();
+        VBox profile  = buildProfileCard();
+        VBox.setVgrow(activity, Priority.ALWAYS);
+        VBox.setVgrow(profile,  Priority.ALWAYS);
+
+        HBox.setHgrow(activity, Priority.ALWAYS);
+        HBox.setHgrow(profile,  Priority.NEVER);
+        activity.setMinWidth(0);
+        profile.setMinWidth(0);
+
+        profile.setPrefWidth(340);
+        profile.setMaxWidth(340);
+        activity.setMaxWidth(Double.MAX_VALUE);
+
+        row.getChildren().addAll(activity, profile);
+
+        HBox partnerRow = buildPartnerCards();
+
+        VBox wrap = new VBox(18, row, partnerRow);
+        VBox.setVgrow(row, Priority.ALWAYS);
+        return wrap;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Partner cards
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private HBox buildPartnerCards() {
+        HBox partnerRow = new HBox(16);
+        partnerRow.setAlignment(Pos.CENTER_LEFT);
+
+        StackPane hostingCardPane = buildHostingPartnerCard();
+        StackPane mcCardPane      = buildMcPartnerCard();
+
+        HBox.setHgrow(hostingCardPane, Priority.ALWAYS);
+        HBox.setHgrow(mcCardPane,      Priority.ALWAYS);
+        hostingCardPane.setMaxWidth(Double.MAX_VALUE);
+        mcCardPane.setMaxWidth(Double.MAX_VALUE);
+
+        // HGrow.ALWAYS on both only splits the LEFTOVER space evenly after each
+        // card gets its own computed preferred width — since the two cards have
+        // different internal content (different badge/chip counts, text lengths),
+        // their preferred widths differed and they ended up visibly unequal.
+        // Binding prefWidth directly to exactly half the row forces them to
+        // always match regardless of what's inside either card.
+        hostingCardPane.prefWidthProperty().bind(
+                partnerRow.widthProperty().subtract(partnerRow.getSpacing()).divide(2));
+        mcCardPane.prefWidthProperty().bind(
+                partnerRow.widthProperty().subtract(partnerRow.getSpacing()).divide(2));
+
+        partnerRow.getChildren().addAll(hostingCardPane, mcCardPane);
+        return partnerRow;
+    }
+
+    private StackPane buildHostingPartnerCard() {
+        final String hex = ACCENT_BLUE;
+
+        VBox card = dashboardCard();
+        card.getStyleClass().add("partner-card");
+        card.setMaxWidth(Double.MAX_VALUE);
+        card.setPadding(new Insets(24, 20, 24, 20));
+        card.setStyle(
+            "-fx-background-color: linear-gradient(135deg, rgba(79,155,196,0.30) 0%, rgba(127,194,224,0.10) 55%, rgba(11,24,38,0.20) 100%);" +
+            "-fx-border-color: rgba(127,194,224,0.35);" +
+            "-fx-border-width: 1.2;" +
+            "-fx-border-radius: 14;" +
+            "-fx-background-radius: 14;"
+        );
+
+        HBox titleRow = new HBox(10);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label("HOSTING PARTNER");
+        title.getStyleClass().add("card-title");
+        Region titleSpacer = new Region();
+        HBox.setHgrow(titleSpacer, Priority.ALWAYS);
+        Label ribbon = partnerRibbon("PARTNER", hex);
+        titleRow.getChildren().addAll(title, titleSpacer, ribbon);
+
+        Region accentLine = accentDivider(hex, "#4f9bc4", "#e8f4f8");
+
+        HBox body = new HBox(16);
+        body.setAlignment(Pos.CENTER_LEFT);
+
+        StackPane iconPane = new StackPane();
+        iconPane.getStyleClass().addAll("partner-icon", "partner-icon-hosting");
+        iconPane.setMinSize(58, 58);
+        iconPane.setPrefSize(58, 58);
+        iconPane.setMaxSize(58, 58);
+        iconPane.setStyle(
+            "-fx-background-color: linear-gradient(135deg, #6fb7d6, #a8d8ea);" +
+            "-fx-background-radius: 16;"
+        );
+        DropShadow iconGlow = new DropShadow(16, Color.web(hex, 0.55));
+        iconGlow.setSpread(0.12);
+        iconPane.setEffect(iconGlow);
+        Label emoji = new Label("\uD83D\uDDA5");
+        emoji.setStyle("-fx-font-size: 24px;");
+        iconPane.getChildren().add(emoji);
+
+        VBox textBox = new VBox(6);
+        HBox nameRow = new HBox(8);
+        nameRow.setAlignment(Pos.CENTER_LEFT);
+        Label name = new Label("AveroHost");
+        name.getStyleClass().add("partner-name");
+        Label verified = new Label("\u2713 Verified");
+        verified.setStyle(
+            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: " + hex + ";" +
+            "-fx-background-color: derive(" + hex + ", -78%);" +
+            "-fx-background-radius: 10; -fx-padding: 2 8 2 8;"
+        );
+        nameRow.getChildren().addAll(name, verified);
+
+        Label desc = new Label("Fast, reliable Minecraft server hosting — optimised for AveroLauncher players.");
+        desc.getStyleClass().add("partner-desc");
+        desc.setWrapText(true);
+        desc.setMaxWidth(Double.MAX_VALUE);
+
+        // Hosting metrics row
+        HBox metricsRow = new HBox(10);
+        metricsRow.getChildren().addAll(
+            metricBadge("99.9%", "Uptime",    hex),
+            metricBadge("< 30ms", "Latency",  ACCENT_GREEN),
+            metricBadge("24/7", "Support",    ACCENT_VIOLET)
+        );
+
+        HBox features = new HBox(8);
+        features.getChildren().addAll(
+                featureChip("\u26A1", "Instant Setup"),
+                featureChip("\uD83D\uDEE1", "DDoS Protected"),
+                featureChip("\uD83D\uDD52", "24/7 Support")
+        );
+
+        HBox.setHgrow(textBox, Priority.ALWAYS);
+        textBox.getChildren().addAll(nameRow, desc, metricsRow, features);
+        body.getChildren().addAll(iconPane, textBox);
+
+        Button btn = new Button("Visit Partner  \u2192");
+        btn.getStyleClass().add("secondary-button");
+        btn.setMaxWidth(Double.MAX_VALUE);
+        styleAccentButton(btn, hex);
+
+        card.getChildren().addAll(titleRow, accentLine, body, btn);
+
+        StackPane stack = new StackPane(card);
+        stack.setMaxWidth(Double.MAX_VALUE);
+        stack.getStyleClass().add("partner-card-stack");
+
+        DropShadow cardElevation = new DropShadow(22, Color.web("#000000", 0.32));
+        cardElevation.setOffsetY(6);
+        stack.setEffect(cardElevation);
+        attachHoverGrow(stack);
+
+        return stack;
+    }
+
+    private StackPane buildMcPartnerCard() {
+        final String hex = ACCENT_RED;
+
+        VBox card = dashboardCard();
+        card.getStyleClass().addAll("partner-card", "partner-card-mc");
+        card.setMaxWidth(Double.MAX_VALUE);
+        card.setPadding(new Insets(24, 22, 22, 22));
+        card.setStyle(
+            "-fx-background-color: linear-gradient(135deg, rgba(196,79,79,0.32) 0%, rgba(232,112,112,0.12) 55%, rgba(22,14,14,0.25) 100%);" +
+            "-fx-border-color: rgba(232,112,112,0.4);" +
+            "-fx-border-width: 1.2;" +
+            "-fx-border-radius: 16;" +
+            "-fx-background-radius: 16;"
+        );
+
+        HBox titleRow = new HBox(10);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        Label title = new Label("MC PARTNER");
+        title.getStyleClass().add("card-title");
+        title.setStyle("-fx-text-fill: #ffd0d0;");
+        Region titleSpacer = new Region();
+        HBox.setHgrow(titleSpacer, Priority.ALWAYS);
+        Label ribbon = partnerRibbon("PARTNER", hex);
+        titleRow.getChildren().addAll(title, titleSpacer, ribbon);
+
+        Region accentLine = accentDivider(hex, "#c44f4f", "#ffd0d0");
+
+        VBox glass = new VBox(14);
+        glass.setPadding(new Insets(16));
+        glass.setStyle(
+            "-fx-background-color: rgba(22,14,14,0.48);" +
+            "-fx-background-radius: 14;" +
+            "-fx-border-color: rgba(255,255,255,0.10);" +
+            "-fx-border-width: 1;" +
+            "-fx-border-radius: 14;"
+        );
+
+        HBox body = new HBox(16);
+        body.setAlignment(Pos.CENTER_LEFT);
+
+        StackPane logoPane = new StackPane();
+        logoPane.setMinSize(60, 60);
+        logoPane.setPrefSize(60, 60);
+        logoPane.setMaxSize(60, 60);
+        logoPane.getStyleClass().addAll("partner-icon", "partner-icon-mc");
+        logoPane.setStyle(
+            "-fx-background-color: linear-gradient(135deg, #c44f4f, " + hex + ");" +
+            "-fx-background-radius: 15;" +
+            "-fx-border-color: rgba(255,255,255,0.28);" +
+            "-fx-border-width: 1.4;" +
+            "-fx-border-radius: 15;"
+        );
+        DropShadow logoGlow = new DropShadow(16, Color.web(hex, 0.6));
+        logoGlow.setSpread(0.15);
+        logoPane.setEffect(logoGlow);
+
+        Image pinoyLogo = loadClasspathImage("/images/pinoy.png");
+        if (pinoyLogo != null) {
+            ImageView logoView = new ImageView(pinoyLogo);
+            logoView.setFitWidth(52);
+            logoView.setFitHeight(52);
+            logoView.setPreserveRatio(true);
+            logoView.setSmooth(true);
+            Rectangle logoClip = new Rectangle(52, 52);
+            logoClip.setArcWidth(11);
+            logoClip.setArcHeight(11);
+            logoView.setClip(logoClip);
+            logoPane.getChildren().add(logoView);
+        } else {
+            Label fallback = new Label("\u26CF");
+            fallback.setStyle("-fx-font-size: 24px;");
+            logoPane.getChildren().add(fallback);
+        }
+
+        VBox textBox = new VBox(7);
+        HBox.setHgrow(textBox, Priority.ALWAYS);
+
+        HBox nameRow = new HBox(8);
+        nameRow.setAlignment(Pos.CENTER_LEFT);
+        Label name = new Label("PINOYCraft");
+        name.getStyleClass().add("partner-name");
+        name.setStyle("-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;");
+        StackPane statusDot = new StackPane();
+        statusDot.setMinSize(7, 7);
+        statusDot.setMaxSize(7, 7);
+        statusDot.setStyle("-fx-background-color: #59d68a; -fx-background-radius: 5;");
+        DropShadow dotGlow = new DropShadow(6, Color.web("#59d68a", 0.9));
+        statusDot.setEffect(dotGlow);
+        Label statusLabel = new Label("ONLINE");
+        statusLabel.setStyle("-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #59d68a;");
+        nameRow.getChildren().addAll(name, statusDot, statusLabel);
+
+        Label tagline = new Label("The community's favourite icy-biome survival server.");
+        tagline.getStyleClass().add("partner-desc");
+        tagline.setWrapText(true);
+        tagline.setMaxWidth(Double.MAX_VALUE);
+        tagline.setStyle("-fx-text-fill: rgba(255,255,255,0.72); -fx-font-size: 11.5px;");
+
+        // Server stats row
+        HBox statsRow = new HBox(10);
+        statsRow.getChildren().addAll(
+            metricBadge("247", "Players",   ACCENT_GREEN),
+            metricBadge("1.21", "MC Ver",   ACCENT_BLUE),
+            metricBadge("4ms", "Avg Ping",  ACCENT_AMBER)
+        );
+
+        HBox badges = new HBox(6);
+        badges.setAlignment(Pos.CENTER_LEFT);
+        badges.getChildren().addAll(
+                modeBadge("Survival", "partner-badge-survival",  ACCENT_GREEN),
+                modeBadge("Skyblock", "partner-badge-skyblock",  ACCENT_BLUE),
+                modeBadge("Prison",   "partner-badge-prison",    ACCENT_AMBER)
+        );
+
+        HBox ipRow = new HBox(7);
+        ipRow.setAlignment(Pos.CENTER_LEFT);
+        ipRow.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.08);" +
+            "-fx-background-radius: 7; -fx-padding: 4 10 4 10;"
+        );
+        Label ipIcon = new Label("\uD83D\uDD17");
+        ipIcon.setStyle("-fx-font-size: 10px;");
+        Label ipLabel = new Label("play.pinoy-craft.com");
+        ipLabel.getStyleClass().add("partner-ip");
+        ipLabel.setStyle(
+            "-fx-font-family: 'Courier New', Courier, monospace; -fx-font-size: 12px;" +
+            "-fx-text-fill: rgba(255,255,255,0.88);"
+        );
+        ipRow.getChildren().addAll(ipIcon, ipLabel);
+
+        textBox.getChildren().addAll(nameRow, tagline, statsRow, badges, ipRow);
+        body.getChildren().addAll(logoPane, textBox);
+        glass.getChildren().add(body);
+
+        Button btn = new Button("\u25B6  Join Server  \u2192");
+        btn.getStyleClass().add("secondary-button");
+        btn.setMaxWidth(Double.MAX_VALUE);
+        styleAccentButton(btn, hex);
+        btn.setOnAction(e -> {
+            try {
+                java.awt.Toolkit.getDefaultToolkit()
+                        .getSystemClipboard()
+                        .setContents(new java.awt.datatransfer.StringSelection("play.pinoy-craft.com"), null);
+            } catch (Exception ignored) {}
+            String original = btn.getText();
+            btn.setText("\u2713 Copied to clipboard!");
+            PauseTransition revert = new PauseTransition(Duration.millis(1400));
+            revert.setOnFinished(ev -> btn.setText(original));
+            revert.play();
+        });
+
+        card.getChildren().addAll(titleRow, accentLine, glass, btn);
+
+        StackPane stack = new StackPane(card);
+        stack.setMaxWidth(Double.MAX_VALUE);
+        stack.getStyleClass().add("partner-card-stack");
+
+        Image bgImage = loadClasspathImage("/images/bg.png");
+        if (bgImage != null) {
+            ImageView bgView = new ImageView(bgImage);
+            bgView.setPreserveRatio(false);
+            bgView.setSmooth(true);
+            bgView.setManaged(false);
+
+            Rectangle bgClip = new Rectangle();
+            bgClip.setArcWidth(14);
+            bgClip.setArcHeight(14);
+            bgView.setClip(bgClip);
+
+            Region scrim = new Region();
+            scrim.setMouseTransparent(true);
+            scrim.setManaged(false);
+            scrim.setStyle(
+                "-fx-background-color: linear-gradient(to bottom, rgba(20,12,12,0.55), rgba(20,10,10,0.85));" +
+                "-fx-background-radius: 14;"
+            );
+
+            stack.getChildren().addAll(0, java.util.List.of(bgView, scrim));
+
+            stack.layoutBoundsProperty().addListener((obs, oldB, newB) -> {
+                double w = newB.getWidth();
+                double h = newB.getHeight();
+                if (w > 0 && h > 0) {
+                    bgView.setFitWidth(w);
+                    bgView.setFitHeight(h);
+                    bgView.resizeRelocate(0, 0, w, h);
+                    bgClip.setWidth(w);
+                    bgClip.setHeight(h);
+                    scrim.resizeRelocate(0, 0, w, h);
+                }
+            });
+        }
+
+        DropShadow cardElevation = new DropShadow(22, Color.web("#000000", 0.32));
+        cardElevation.setOffsetY(6);
+        stack.setEffect(cardElevation);
+        attachHoverGrow(stack);
+
+        return stack;
+    }
+
+    /** Horizontal accent divider for partner cards. */
+    private Region accentDivider(String mid, String start, String end) {
+        Region line = new Region();
+        line.setPrefSize(46, 3);
+        line.setMaxSize(46, 3);
+        line.setStyle(
+            "-fx-background-color: linear-gradient(to right, " + start + ", " + mid + ", " + end + ");" +
+            "-fx-background-radius: 3;"
+        );
+        return line;
+    }
+
+    /** Small KPI metric badge (value + label stacked). */
+    private VBox metricBadge(String value, String label, String hex) {
+        VBox box = new VBox(0);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(4, 10, 4, 10));
+        box.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.05);" +
+            "-fx-background-radius: 8;" +
+            "-fx-border-color: rgba(255,255,255,0.10);" +
+            "-fx-border-radius: 8; -fx-border-width: 1;"
+        );
+        Label v = new Label(value);
+        v.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: " + hex + ";");
+        Label l = new Label(label);
+        l.setStyle("-fx-font-size: 9px; -fx-text-fill: rgba(255,255,255,0.50);");
+        box.getChildren().addAll(v, l);
+        return box;
+    }
+
+    private Label modeBadge(String text, String styleClass, String hex) {
+        Label badge = new Label(text);
+        badge.getStyleClass().addAll("partner-mode-badge", styleClass);
+        badge.setStyle(
+            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 3 10 3 10;" +
+            "-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-width: 1;" +
+            "-fx-background-color: derive(" + hex + ", -75%);" +
+            "-fx-border-color: derive(" + hex + ", -30%);" +
+            "-fx-text-fill: " + hex + ";"
+        );
+        return badge;
+    }
+
+    private HBox featureChip(String emoji, String text) {
+        HBox chip = new HBox(4);
+        chip.setAlignment(Pos.CENTER_LEFT);
+        chip.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.06);" +
+            "-fx-background-radius: 8; -fx-padding: 3 8 3 8;"
+        );
+        Label icon = new Label(emoji);
+        icon.setStyle("-fx-font-size: 10px;");
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 10px; -fx-text-fill: rgba(255,255,255,0.65);");
+        chip.getChildren().addAll(icon, label);
+        return chip;
+    }
+
+    private Label partnerRibbon(String text, String hex) {
+        Label ribbon = new Label(text);
+        ribbon.setStyle(
+            "-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: white;" +
+            "-fx-background-color: " + hex + ";" +
+            "-fx-background-radius: 10; -fx-padding: 3 10 3 10;"
+        );
+        DropShadow glow = new DropShadow(8, Color.web(hex, 0.45));
+        ribbon.setEffect(glow);
+        return ribbon;
+    }
+
+    private void styleAccentButton(Button btn, String hex) {
+        String base =
+            "-fx-border-color: " + hex + "; -fx-border-width: 1.4;" +
+            "-fx-border-radius: 8; -fx-background-radius: 8;";
+        String hovered = base + " -fx-background-color: derive(" + hex + ", -72%);";
+        btn.setStyle(base);
+        btn.setOnMouseEntered(e -> btn.setStyle(hovered));
+        btn.setOnMouseExited(e -> btn.setStyle(base));
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Activity card (tabbed: News / Changes / Versions)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private VBox buildActivityCard() {
+        VBox card = dashboardCard();
+        // Fixed height instead of pure VGrow: without a cap, this card (and the
+        // page) grew to fit however many news/changelog items existed instead of
+        // scrolling internally — the actual cause of the excess page scrolling.
+        card.setPrefHeight(300);
+        card.setMinHeight(300);
+        card.setMaxHeight(300);
+
+        TabPane tabs = new TabPane();
+        tabs.getStyleClass().add("changelog-tabs");
+        tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        VBox.setVgrow(tabs, Priority.ALWAYS);
+
+        Tab newsTab     = new Tab("NEWS",    buildNewsList());
+        Tab changesTab  = new Tab("CHANGES", buildChangeList());
+        Tab versionsTab = new Tab("VERSIONS", placeholderPane(
+                "Version history will list installs once the version manager is connected."));
+        tabs.getTabs().addAll(newsTab, changesTab, versionsTab);
+
+        card.getChildren().add(tabs);
+        return card;
+    }
+
+    private ScrollPane buildNewsList() {
+        VBox list = new VBox(12);
+        list.setPadding(new Insets(12, 0, 0, 0));
+        list.getChildren().addAll(
+                newsItem("Launcher 1.0 is out",
+                         "AveroLauncher 1.0 has officially launched — grab the latest build and start playing.",
+                         "New", "/images/news1.png"),
+                newsItem("Website and store is out",
+                         "Our website and store are now live, with more features on the way.",
+                         "New", "/images/news2.png"),
+                newsItem("Veyro AI is here to help",
+                         "Veyro AI is built into AveroLauncher to answer your questions and help you get set up.",
+                         "New", "/images/news3.png")
+        );
+        ScrollPane scroll = new ScrollPane(list);
+        scroll.setFitToWidth(true);
+        scroll.getStyleClass().add("page-scroll");
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        return scroll;
+    }
+
+    private VBox newsItem(String title, String desc, String time, String imagePath) {
+        HBox row = new HBox(12);
+        row.setAlignment(Pos.TOP_LEFT);
+        StackPane thumb = new StackPane();
+        thumb.getStyleClass().add("news-thumb");
+        thumb.setMinSize(72, 54);
+        thumb.setPrefSize(72, 54);
+        thumb.setMaxSize(72, 54);
+        applyThumbImage(thumb, imagePath, 72, 54);
+
+        VBox text = new VBox(3);
+        HBox titleRow = new HBox(8);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        Label t = new Label(title);
+        t.getStyleClass().add("news-title");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        if (!time.isEmpty()) {
+            Label ti = new Label(time);
+            ti.getStyleClass().add("news-time");
+            titleRow.getChildren().addAll(t, spacer, ti);
+        } else {
+            titleRow.getChildren().addAll(t, spacer);
+        }
+
+        Label d = new Label(desc);
+        d.setWrapText(true);
+        d.getStyleClass().add("news-desc");
+        d.setMaxWidth(Double.MAX_VALUE);
+        VBox.setVgrow(d, Priority.ALWAYS);
+
+        text.getChildren().addAll(titleRow, d);
+        HBox.setHgrow(text, Priority.ALWAYS);
+        text.setMaxWidth(Double.MAX_VALUE);
+
+        row.getChildren().addAll(thumb, text);
+        HBox.setHgrow(text, Priority.ALWAYS);
+
+        VBox wrapper = new VBox(row);
+        wrapper.getStyleClass().add("news-row");
+        attachHoverGrow(wrapper);
+        return wrapper;
+    }
+
+    private ScrollPane buildChangeList() {
+        VBox list = new VBox(12);
+        list.setPadding(new Insets(12, 0, 0, 0));
+        list.getChildren().addAll(
+                changeItem("Redesigned Home dashboard",
+                           "Hero banner, news, changelog and profile panels.", "now"),
+                changeItem("Persisted Settings",
+                           "Minecraft directory, RAM, downloads and appearance all save live.", "today"),
+                changeItem("Cross-platform data paths",
+                           "Config now lives in the correct OS app-data folder.", "today"),
+                changeItem("Sidebar navigation",
+                           "All nine launcher sections are reachable and styled.", "today"),
+                changeItem("Modpack support",
+                           ".mrpack and CurseForge modpacks auto-detect their MC version.", "today")
+        );
+        ScrollPane scroll = new ScrollPane(list);
+        scroll.setFitToWidth(true);
+        scroll.getStyleClass().add("page-scroll");
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        return scroll;
+    }
+
+    private VBox changeItem(String title, String desc, String time) {
+        HBox row = new HBox(12);
+        row.setAlignment(Pos.TOP_LEFT);
+        StackPane icon = new StackPane();
+        icon.getStyleClass().add("change-icon");
+        icon.setMinSize(36, 36);
+        icon.setPrefSize(36, 36);
+        icon.setMaxSize(36, 36);
+        Label iconGlyph = new Label("\u2713");
+        iconGlyph.getStyleClass().add("change-icon-glyph");
+        icon.getChildren().add(iconGlyph);
+
+        VBox text = new VBox(2);
+        HBox titleRow = new HBox();
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        Label t = new Label(title);
+        t.getStyleClass().add("change-title");
+        HBox spacer = new HBox();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label ti = new Label(time);
+        ti.getStyleClass().add("change-time");
+        titleRow.getChildren().addAll(t, spacer, ti);
+
+        Label d = new Label(desc);
+        d.setWrapText(true);
+        d.getStyleClass().add("change-desc");
+        d.setMaxWidth(Double.MAX_VALUE);
+
+        text.getChildren().addAll(titleRow, d);
+        row.getChildren().addAll(icon, text);
+        HBox.setHgrow(text, Priority.ALWAYS);
+        VBox wrapper = new VBox(row);
+        wrapper.getStyleClass().add("news-row");
+        attachHoverGrow(wrapper);
+        return wrapper;
+    }
+
+    private VBox placeholderPane(String message) {
+        VBox box = new VBox();
+        box.setPadding(new Insets(24, 0, 0, 0));
+        Label label = new Label(message);
+        label.setWrapText(true);
+        label.getStyleClass().add("news-desc");
+        box.getChildren().add(label);
+        return box;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Profile card — richer presence detail
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private VBox buildProfileCard() {
+        VBox card = dashboardCard();
+
+        Label title = new Label("YOUR PROFILE");
+        title.getStyleClass().add("card-title");
+
+        com.averolauncher.model.Account active = resolveActiveAccount();
+        String displayName = active != null ? active.username : "Not signed in";
+        String accountType = active == null ? "No account" :
+                (active.type == com.averolauncher.model.Account.Type.MICROSOFT
+                        ? "Microsoft account" : "Offline profile");
+        String initial = displayName.isBlank() ? "?" : displayName.substring(0, 1).toUpperCase();
+
+        StackPane banner = new StackPane();
+        banner.getStyleClass().add("profile-banner");
+        // Shrunk from 90 — this banner plus the ice footer below were most of
+        // why the profile card was so much taller than it needed to be.
+        banner.setPrefHeight(56);
+        applyBannerImage(banner, "/images/profile.png", 56);
+
+        HBox profileRow = new HBox(12);
+        profileRow.setAlignment(Pos.CENTER_LEFT);
+
+        StackPane avatar = new StackPane();
+        avatar.getStyleClass().add("profile-avatar");
+        avatar.setMinSize(52, 52);
+        avatar.setPrefSize(52, 52);
+        Label initialLabel = new Label(initial);
+        initialLabel.getStyleClass().add("avatar-initial");
+
+        // Build the avatar content first, then wrap it
+        avatar.getChildren().add(initialLabel);
+
+        // Online indicator overlaid on avatar
+        StackPane avatarWrapper = new StackPane();
+        avatarWrapper.setMinSize(52, 52);
+        avatarWrapper.setMaxSize(52, 52);
+        avatarWrapper.getChildren().add(avatar);
+        if (active != null) {
+            StackPane onlineDot = new StackPane();
+            onlineDot.setMinSize(11, 11);
+            onlineDot.setMaxSize(11, 11);
+            onlineDot.setStyle(
+                "-fx-background-color: " + ACCENT_GREEN + ";" +
+                "-fx-background-radius: 6;" +
+                "-fx-border-color: rgba(15,20,30,1.0);" +
+                "-fx-border-radius: 6; -fx-border-width: 1.5;"
+            );
+            StackPane.setAlignment(onlineDot, Pos.BOTTOM_RIGHT);
+            DropShadow g = new DropShadow(5, Color.web(ACCENT_GREEN, 0.85));
+            onlineDot.setEffect(g);
+            avatarWrapper.getChildren().add(onlineDot);
+        }
+
+        VBox names = new VBox(2);
+        Label name = new Label(displayName);
+        name.getStyleClass().add("profile-name");
+        Label tag = new Label(accountType);
+        tag.getStyleClass().add("profile-tag");
+
+        // Presense / status line
+        if (active != null) {
+            Label statusLine = new Label("\u25CF  Active now");
+            statusLine.setStyle(
+                "-fx-font-size: 10px; -fx-text-fill: " + ACCENT_GREEN + ";"
+            );
+            names.getChildren().addAll(name, tag, statusLine);
+        } else {
+            names.getChildren().addAll(name, tag);
+        }
+        profileRow.getChildren().addAll(avatarWrapper, names);
+
+        Button accountsBtn = new Button("Manage Accounts \u2192");
+        accountsBtn.getStyleClass().add("secondary-button");
+        accountsBtn.setMaxWidth(Double.MAX_VALUE);
+        accountsBtn.setOnAction(e -> navigator.accept(NavPage.ACCOUNTS));
+
+        // Launch stats strip
+        HBox launchStats = new HBox(0);
+        launchStats.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.04);" +
+            "-fx-background-radius: 8;"
+        );
+        launchStats.getChildren().addAll(
+            launchStat("Sessions",   "—",   ACCENT_BLUE),
+            launchStatDivider(),
+            launchStat("Mods",       "0",   ACCENT_VIOLET),
+            launchStatDivider(),
+            launchStat("Servers",
+                String.valueOf(settings.savedServers != null ? settings.savedServers.size() : 0),
+                ACCENT_GREEN)
+        );
+
+        Label friendsTitle = new Label("FRIENDS (0)");
+        friendsTitle.getStyleClass().add("card-title");
+        friendsTitle.setPadding(new Insets(4, 0, 0, 0));
+        Label friendsEmpty = new Label("Friends list will appear here once a social backend is connected.");
+        friendsEmpty.setWrapText(true);
+        friendsEmpty.setMaxWidth(Double.MAX_VALUE);
+        friendsEmpty.getStyleClass().add("news-desc");
+
+        StackPane iceFooter = new StackPane();
+        iceFooter.getStyleClass().add("profile-ice-footer");
+        // Shrunk from 140/70 — this was purely decorative and was most of why
+        // the profile card ran so much taller than the activity card beside it.
+        iceFooter.setMinHeight(32);
+        iceFooter.setPrefHeight(32);
+        applyBottomImage(iceFooter, "/images/ice.png", 32);
+
+        card.getChildren().addAll(title, banner, profileRow, accountsBtn, launchStats,
+                friendsTitle, friendsEmpty, iceFooter);
+        return card;
+    }
+
+    /** One stat cell in the profile launch-stats strip. */
+    private VBox launchStat(String label, String value, String hex) {
+        VBox cell = new VBox(1);
+        cell.setAlignment(Pos.CENTER);
+        cell.setPadding(new Insets(8, 14, 8, 14));
+        HBox.setHgrow(cell, Priority.ALWAYS);
+        Label v = new Label(value);
+        v.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + hex + ";");
+        Label l = new Label(label);
+        l.setStyle("-fx-font-size: 9px; -fx-text-fill: rgba(255,255,255,0.45);");
+        cell.getChildren().addAll(v, l);
+        return cell;
+    }
+
+    private StackPane launchStatDivider() {
+        Region sep = new Region();
+        sep.setMinSize(1, 24);
+        sep.setPrefSize(1, 24);
+        sep.setMaxSize(1, 24);
+        sep.setStyle("-fx-background-color: rgba(255,255,255,0.10);");
+        StackPane wrapper = new StackPane(sep);
+        wrapper.setAlignment(Pos.CENTER);
+        wrapper.setPadding(new Insets(0, 4, 0, 4));
+        return wrapper;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Shared card factory
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private VBox dashboardCard() {
+        VBox card = new VBox(10); // tightened from 14, part of the general compacting pass
+        card.getStyleClass().add("dashboard-card");
+        card.setPadding(new Insets(14));
+        return card;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Animation helpers — smoother cubic-bezier easing
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Hover grow: slightly larger scale + subtle drop-shadow boost.
+     * Uses EASE_BOTH interpolator for a springier, more polished feel.
+     */
+    private void attachHoverGrow(Node node) {
+        if (!animationsAllowed()) return;
+        ScaleTransition grow = new ScaleTransition(Duration.millis(140), node);
+        grow.setToX(1.017);
+        grow.setToY(1.017);
+        grow.setInterpolator(Interpolator.EASE_OUT);
+        ScaleTransition shrink = new ScaleTransition(Duration.millis(180), node);
+        shrink.setToX(1.0);
+        shrink.setToY(1.0);
+        shrink.setInterpolator(Interpolator.EASE_BOTH);
+        node.setOnMouseEntered(e -> { grow.stop(); shrink.stop(); grow.playFromStart(); });
+        node.setOnMouseExited(e -> { grow.stop(); shrink.stop(); shrink.playFromStart(); });
+    }
+
+    private boolean animationsAllowed() {
+        return settings.animationsEnabled && !settings.lowEndMode;
+    }
+
+    /**
+     * Cascade fade + slide up. Uses a custom cubic-bezier spline for a
+     * "decelerate" curve (fast start, slow stop) — feels more natural than
+     * linear or EASE_IN.
+     */
+    private void fadeInCascade(Node node, int orderIndex) {
+        if (!animationsAllowed()) return;
+        node.setOpacity(0);
+        node.setTranslateY(20);
+        FadeTransition fade = new FadeTransition(Duration.millis(340), node);
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        TranslateTransition slide = new TranslateTransition(Duration.millis(340), node);
+        slide.setFromY(20);
+        slide.setToY(0);
+        // Custom decelerate spline: fast arrival, settles smoothly
+        slide.setInterpolator(Interpolator.SPLINE(0.16, 0.84, 0.44, 1.0));
+        fade.setInterpolator(Interpolator.EASE_IN);
+        ParallelTransition combo = new ParallelTransition(fade, slide);
+        combo.setDelay(Duration.millis(orderIndex * 80L));
+        combo.play();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Account helper
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private com.averolauncher.model.Account resolveActiveAccount() {
+        if (settings.activeAccountId == null) return null;
+        return accountRepository.load().stream()
+                .filter(a -> a.id.equals(settings.activeAccountId))
+                .findFirst().orElse(null);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Image helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Loads /images/hero-background.jpg and "cover"-fits it behind the hero's
+     * gradient/scrim/text, clipped to the hero's own rounded corners so it can
+     * never bleed past the banner. Returns null (contributing nothing) if the
+     * file isn't on the classpath — the caller falls back to the plain gradient.
+     */
+    /**
+     * Loads /images/hero-background.jpg and "cover"-fits it across the WHOLE
+     * hero banner — scaled by the LARGER of the two ratios so the image always
+     * fills both the pane's live width and its fixed height with no gaps,
+     * then centered and cropped (excess spills past the pane and is clipped
+     * off) rather than letterboxed. This used to scale by the smaller ratio
+     * ("contain"), which left the untouched gradient showing on either side
+     * of the photo as soon as the banner was wider than the scaled image —
+     * the "two sides" gap that made the banner look broken.
+     *
+     * heroHeight is a FIXED constant (HERO_HEIGHT), not a live read of
+     * hero.heightProperty() — hero's height is itself locked to that same
+     * constant (see buildHero), so this scale calc only ever depends on the
+     * pane's live WIDTH. Binding it to hero.heightProperty() instead (an
+     * earlier version of this method) created a self-referential loop — the
+     * image's size depended on the pane's size, which depended on the image's
+     * size — that made the banner render unpredictably.
+     */
+    private Node buildHeroBackgroundPhoto(StackPane hero, double heroHeight) {
+        Image image = loadClasspathImage("/images/hero-background.jpg");
+        if (image == null || image.isError() || image.getWidth() <= 0 || image.getHeight() <= 0) {
+            return null;
+        }
+        double imgW = image.getWidth();
+        double imgH = image.getHeight();
+
+        ImageView view = new ImageView(image);
+        view.setSmooth(true);
+        view.setPreserveRatio(false);
+        DoubleBinding scale = Bindings.createDoubleBinding(
+                () -> Math.max(Math.max(hero.getWidth(), 1) / imgW, heroHeight / imgH),
+                hero.widthProperty()
+        );
+        view.fitWidthProperty().bind(scale.multiply(imgW));
+        view.fitHeightProperty().bind(scale.multiply(imgH));
+        // Portrait/tall source art scaled to "cover" a short, wide banner ends up
+        // MUCH taller than the banner (fitHeight >> heroHeight), so most of the
+        // vertical extent gets cropped off regardless of anchor. Anchoring the
+        // crop to the TOP (rather than dead-center) keeps the upper composition —
+        // where tall character/scenery art usually puts its focal point — intact,
+        // and crops away the bottom instead of trimming both ends evenly.
+        StackPane.setAlignment(view, Pos.TOP_CENTER);
+
+        // "Cover" can overshoot the pane on the axis that isn't the limiting
+        // ratio, so — unlike "contain" — this clip is load-bearing: it crops
+        // the overflow back to exactly the hero's bounds, with the same
+        // rounded corners as the rest of the banner.
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(hero.widthProperty());
+        clip.setHeight(heroHeight);
+        clip.setArcWidth(28);
+        clip.setArcHeight(28);
+        view.setClip(clip);
+
+        return view;
+    }
+
+    private Image loadClasspathImage(String resourcePath) {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+            if (is == null) return null;
+            Image image = new Image(is);
+            return image.isError() ? null : image;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Loads a bundled image (e.g. /images/b.png) as the button's actual CSS
+     * background — not a graphic node — via -fx-background-image, "cover"-fit
+     * and centered so the whole button becomes that artwork. The existing
+     * .hero-play-button gradient (set via CSS class) stays underneath as a
+     * fallback fill in case the image has any transparency, and as the look
+     * if the file simply isn't on the classpath yet — this method contributes
+     * nothing in that case rather than leaving the button looking broken.
+     * A text drop-shadow is added so the version label stays legible over
+     * whatever artwork ends up behind it.
+     */
+    private void applyButtonBackgroundImage(Button button, String resourcePath) {
+        var url = getClass().getResource(resourcePath);
+        if (url == null) return;
+        button.setStyle(
+            "-fx-background-image: url('" + url.toExternalForm() + "');" +
+            // "contain", not "cover": b.png is a designed badge graphic (a
+            // rounded cloud/mascot shape), not a texture meant to be cropped
+            // to fill an arbitrary rectangle — "cover" was slicing pieces off
+            // its edges. "contain" shows the whole graphic intact, letting the
+            // .hero-play-button gradient underneath show through any letterbox
+            // space instead of forcing a hard crop.
+            "-fx-background-size: contain;" +
+            "-fx-background-position: center center;" +
+            "-fx-background-repeat: no-repeat;" +
+            "-fx-background-radius: 10;" +
+            "-fx-text-fill: white;" +
+            "-fx-font-weight: 800;" +
+            "-fx-font-size: 16px;"
+        );
+        // Set as a real Effect (not just -fx-effect in the style string above)
+        // so buildHero can chain the pulse glow's setInput(...) onto this and
+        // keep both — Node.setEffect() always replaces whatever was there,
+        // CSS-set or not, so the pulse would otherwise silently erase this.
+        button.setEffect(new DropShadow(3, 0, 1, Color.web("#000000", 0.75)));
+    }
+
+    /**
+     * Fills a banner-style StackPane with a bundled photo, "cover"-fit (scaled up just
+     * enough to fill both the banner's live width and its fixed height, keeping aspect
+     * ratio, excess cropped) and clipped on the BANNER ITSELF — not just the ImageView —
+     * so the photo can never render past its box onto whatever card content follows it,
+     * regardless of the image's native resolution.
+     */
+    private void applyBannerImage(StackPane banner, String resourcePath, double height) {
+        banner.setMinHeight(height);
+        banner.setMaxHeight(height);
+
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(16);
+        clip.setArcHeight(16);
+        clip.widthProperty().bind(banner.widthProperty());
+        clip.heightProperty().bind(banner.heightProperty());
+        banner.setClip(clip);
+
+        Image image = loadClasspathImage(resourcePath);
+        if (image == null || image.isError() || image.getWidth() <= 0 || image.getHeight() <= 0) return;
+        double imgW = image.getWidth();
+        double imgH = image.getHeight();
+
+        ImageView view = new ImageView(image);
+        view.setSmooth(true);
+        // Ratio is preserved manually below via one shared scale factor.
+        view.setPreserveRatio(false);
+        DoubleBinding scale = Bindings.createDoubleBinding(
+                () -> Math.max(Math.max(banner.getWidth(), 1) / imgW, height / imgH),
+                banner.widthProperty()
+        );
+        view.fitWidthProperty().bind(scale.multiply(imgW));
+        view.fitHeightProperty().bind(scale.multiply(imgH));
+        StackPane.setAlignment(view, Pos.CENTER);
+        banner.getChildren().add(0, view);
+    }
+
+    private void applyBottomImage(StackPane pane, String resourcePath, double imageHeight) {
+        Image image = loadClasspathImage(resourcePath);
+        if (image == null) return;
+        ImageView view = new ImageView(image);
+        view.setPreserveRatio(false);
+        view.setFitHeight(imageHeight);
+        view.fitWidthProperty().bind(pane.widthProperty());
+        view.setSmooth(true);
+        StackPane.setAlignment(view, Pos.BOTTOM_CENTER);
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(pane.widthProperty());
+        clip.heightProperty().bind(pane.heightProperty());
+        clip.setArcWidth(16);
+        clip.setArcHeight(16);
+        pane.setClip(clip);
+        Region fade = new Region();
+        fade.setMouseTransparent(true);
+        fade.prefWidthProperty().bind(pane.widthProperty());
+        fade.setPrefHeight(imageHeight * 0.45);
+        StackPane.setAlignment(fade, Pos.TOP_CENTER);
+        fade.setStyle(
+            "-fx-background-color: linear-gradient(to bottom," +
+            " rgba(18,20,26,0.85) 0%, rgba(18,20,26,0.0) 100%);"
+        );
+        pane.getChildren().addAll(view, fade);
+    }
+
+    private void applyThumbImage(StackPane thumb, String resourcePath, double width, double height) {
+        Image image = loadClasspathImage(resourcePath);
+        if (image == null) return;
+        ImageView view = new ImageView(image);
+        view.setPreserveRatio(true);
+        view.setSmooth(true);
+        view.setFitWidth(width);
+        view.setFitHeight(height);
+        StackPane.setAlignment(view, Pos.CENTER);
+        thumb.setClip(null);
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(thumb.widthProperty());
+        clip.heightProperty().bind(thumb.heightProperty());
+        clip.setArcWidth(10);
+        clip.setArcHeight(10);
+        thumb.setClip(clip);
+        thumb.getChildren().add(view);
+    }
+}

@@ -1,0 +1,147 @@
+/* ============================================================================
+   Avero Launcher — shell.css  (window shell; loaded LAST, after tokens + components)
+   Rail sidebar, scrim, compact top bar, update bar, page scroll. Colors come from tokens.css only,
+   except the two decorative accent bands in .av-shell (JavaFX can't apply alpha to a looked-up color).
+   ============================================================================ */
+
+/* ── App background (moved out of MainWindow's inline setStyle) ───────────── */
+.av-shell {
+    -fx-background-color:
+        radial-gradient(center 0% 100%, radius 55%, rgba(255,70,85,0.12) 0%, rgba(255,70,85,0.00) 100%),
+        linear-gradient(to bottom right, rgba(255,70,85,0.00) 0%, rgba(255,70,85,0.00) 66%, rgba(255,70,85,0.075) 66%, rgba(255,70,85,0.075) 80%, rgba(255,70,85,0.00) 80%),
+        linear-gradient(to bottom right, rgba(255,70,85,0.00) 0%, rgba(255,70,85,0.00) 84%, rgba(255,70,85,0.22) 84%, rgba(255,70,85,0.22) 84.4%, rgba(255,70,85,0.00) 84.4%),
+        linear-gradient(to bottom, -av-bg-2 0%, -av-bg-1 100%);
+}
+
+/* ── Pages ────────────────────────────────────────────────────────────── */
+.av-page-host { -fx-background-color: transparent; }
+.av-page-scroll { -fx-background-color: transparent; -fx-background: transparent; }
+.av-page-scroll > .viewport { -fx-background-color: transparent; }
+
+/* ── Scrim (dims the page while the rail is open over it) ─────────────── */
+.av-scrim { -fx-background-color: -av-scrim; }
+
+/* ── Rail sidebar (RailSidebar) ───────────────────────────────────────── */
+.av-rail       { -fx-background-color: -av-bg-0; }
+.av-rail-edge  { -fx-background-color: -av-line; }
+
+.av-rail-brand-row { -fx-padding: 20 0 12 0; }
+.av-rail-brand     { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-text; }
+.av-rail-brand-sub { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+
+/* Items are 240 px wide but only the first 72 px show while collapsed (the rail clips them). */
+.av-rail-item {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.av-rail-item:hover    { -fx-background-color: -av-line; }
+.root:kbd .av-rail-item:focused { -fx-background-color: -av-bg-3; }
+/* Active: accent tint across the icon cell, fading out to the right = the "soft glow" next to the bar */
+.av-rail-item:selected,
+.av-rail-item:selected:hover,
+.av-rail-item:selected:focused,
+.root:kbd .av-rail-item:selected:focused {
+    -fx-background-color: linear-gradient(to right, -av-accent-soft 0%, -av-accent-soft 30%, transparent 100%);
+}
+
+/* Icons are stroked SVGPaths (.nav-icon / .nav-icon-fill, see IconRegistry); dark-theme.css colours them
+   from .nav-button states, so mirror those states for the rail items. */
+.av-rail-item:hover .nav-icon          { -fx-stroke: -av-text; }
+.av-rail-item:hover .nav-icon-fill     { -fx-fill: -av-text; -fx-stroke: -av-text; }
+.av-rail-item:selected .nav-icon       { -fx-fill: transparent; -fx-stroke: -av-accent; }
+.av-rail-item:selected .nav-icon-fill  { -fx-fill: -av-accent; -fx-stroke: -av-accent; }
+
+.av-rail-label { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: -av-text-dim; }
+.av-rail-item:hover .av-rail-label,
+.av-rail-item:focused .av-rail-label,
+.av-rail-item:selected .av-rail-label { -fx-text-fill: -av-text; }
+
+/* The accent bar (static glow: the effect never changes, only the node's translateY animates) */
+.av-rail-indicator {
+    -fx-background-color: -av-accent;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.55), 10, 0.25, 0, 0);
+}
+
+/* Hairline above the separated Settings row */
+.av-rail-divider { -fx-background-color: -av-line; }
+
+.av-rail-footer  { -fx-padding: 8 0 12 0; }
+.av-rail-version { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+.av-rail-foot    { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+
+/* ── Compact top bar (search + account chip) ──────────────────────────── */
+.av-topbar {
+    -fx-background-color: transparent;
+    -fx-padding: 10 24 10 24;
+    -fx-border-color: transparent transparent -av-line transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.av-topbar .account-chip:hover   { -fx-background-color: -av-line-2, -av-bg-3; -fx-background-insets: 0, 1; }
+.root:kbd .av-topbar .account-chip:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* ── Update bar (UpdateBar) ───────────────────────────────────────────── */
+.av-update-bar     { -fx-background-color: -av-line-2, -av-bg-3; -fx-background-insets: 0, 1; -fx-padding: 10 12 10 16; }
+.av-update-title   { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: -av-text; }
+.av-update-summary { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.av-update-status  { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-warn; }
+.av-update-skip {
+    -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim;
+    -fx-underline: false; -fx-border-width: 0; -fx-padding: 4 8 4 8;
+}
+.av-update-skip:hover   { -fx-text-fill: -av-text; -fx-underline: false; }
+.av-update-skip:visited { -fx-text-fill: -av-text-dim; }
+
+/* Small square icon button (update bar dismiss) */
+.av-icon-btn {
+    -fx-background-color: transparent; -fx-background-radius: 0; -fx-border-width: 0;
+    -fx-text-fill: -av-text-dim; -fx-font-size: 13px; -fx-padding: 4 8 4 8; -fx-cursor: hand;
+}
+.av-icon-btn:hover { -fx-background-color: -av-line; -fx-text-fill: -av-text; }
+.root:kbd .av-icon-btn:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+
+/* ── Leaderboard "semipage" drawer (LeaderboardOverlay) ───────────────── */
+.lb-overlay-panel {
+    -fx-background-color:
+        /* hairline left edge, accented orange-to-red */
+        linear-gradient(to bottom, #ffb347, #ff4655),
+        linear-gradient(160deg, rgba(18,32,52,0.99) 0%, rgba(8,14,24,0.99) 100%);
+    -fx-background-insets: 0, 0 0 0 3;
+    -fx-padding: 20 20 16 20;
+    -fx-effect: dropshadow(gaussian, rgba(4,8,14,0.55), 30, 0.2, -6, 0);
+}
+.lb-overlay-header { -fx-padding: 0 0 10 0; -fx-border-color: transparent transparent -av-line transparent; -fx-border-width: 0 0 1 0; }
+.lb-overlay-close {
+    -fx-background-color: transparent; -fx-border-width: 0; -fx-background-radius: 0;
+    -fx-text-fill: -av-text-dim; -fx-font-family: "Avero Display"; -fx-font-weight: bold;
+    -fx-font-size: 13px; -fx-padding: 4 8 4 8; -fx-cursor: hand;
+}
+.lb-overlay-close:hover { -fx-background-color: -av-line; -fx-text-fill: #ffffff; }
+
+/* ── Home: leaderboard button, pinned top-right of the hero (rounded pill, mix left to right) ── */
+.home-leaderboard-btn {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 12px;
+    -fx-text-fill: #ffffff; -fx-cursor: hand;
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.04) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffb43a 0%, #ff7a1f 32%, #ff4a2c 62%, #d9232f 100%);
+    -fx-background-insets: 1, 0;
+    -fx-background-radius: 12, 12;
+    -fx-border-color: rgba(255,196,110,0.55); -fx-border-width: 1.5; -fx-border-radius: 12;
+    -fx-padding: 9 16 9 16;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.45), 14, 0.15, 0, 2);
+}
+.home-leaderboard-btn:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.06) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffc761 0%, #ff9640 32%, #ff6c4c 62%, #e8414a 100%);
+    -fx-border-color: rgba(255,210,140,0.75);
+    -fx-effect: dropshadow(gaussian, rgba(255,138,61,0.65), 20, 0.2, 0, 3);
+}
+.home-leaderboard-btn:armed {
+    -fx-background-color: linear-gradient(to right, #d8902e 0%, #d8582c 40%, #c42c38 100%);
+}
+.home-leaderboard-btn-icon { -fx-stroke: #ffffff; -fx-stroke-width: 1.6; -fx-fill: transparent; }

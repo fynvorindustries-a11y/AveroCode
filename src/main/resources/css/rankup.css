@@ -1,0 +1,79 @@
+/* Cinematic full-screen rank-up overlay (RankUpOverlay). Uses the shared -av-* tokens; tier accent
+   colours are applied inline per-promotion (see RankUpOverlay), never hard-coded here. */
+
+.rankup-overlay { -fx-background-color: transparent; }
+
+.rankup-bg {
+    -fx-background-color: radial-gradient(center 50% 38%, radius 85%, #111a2c 0%, #0a0f1a 55%, #05070c 100%);
+}
+
+.rankup-vignette {
+    -fx-background-color: radial-gradient(center 50% 44%, radius 72%, transparent 50%, rgba(2,3,6,0.65) 100%);
+}
+
+.rankup-frame-corner { -fx-stroke: -av-line-2; -fx-stroke-width: 1.4; -fx-fill: transparent; }
+
+/* ── top bar ──────────────────────────────────────────────────────────── */
+.rankup-topbar { -fx-padding: 22 28 0 28; }
+.rankup-wordmark { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: -av-text; }
+
+.rankup-skip {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-font-family: "Barlow"; -fx-font-size: 11px; -fx-text-fill: -av-text-mute;
+    -fx-padding: 6 6 6 6;
+    -fx-cursor: hand;
+}
+.rankup-skip:hover, .rankup-skip:focused { -fx-text-fill: -av-text-dim; }
+
+.rankup-close {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+.rankup-close-icon { -fx-stroke: -av-text-dim; -fx-stroke-width: 1.6; -fx-stroke-line-cap: round; }
+.rankup-close:hover .rankup-close-icon, .rankup-close:focused .rankup-close-icon { -fx-stroke: -av-text; }
+
+/* ── header / title ───────────────────────────────────────────────────── */
+.rankup-rule { -fx-background-color: -av-line-2; -fx-min-height: 1; -fx-max-height: 1; -fx-pref-width: 50; }
+.rankup-kicker { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; -fx-text-fill: -av-text; }
+.rankup-kicker-sub { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+
+.rankup-promoted { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: -av-text-dim; }
+.rankup-rankname { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 46px; }
+.rankup-tagline  { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: -av-text-mute; }
+.rankup-caption  { -fx-font-family: "Barlow"; -fx-font-size: 13px; -fx-text-fill: -av-text-mute; }
+
+/* ── stats row ────────────────────────────────────────────────────────── */
+.rankup-stat-label { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+.rankup-stat-value { -fx-font-family: "Barlow"; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: -av-text; }
+.rankup-ap-value   { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 28px; }
+.rankup-ap-caption { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }
+
+/* glass cards for Previous / AP gained / Next */
+.rankup-card {
+    -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.065), rgba(255,255,255,0.02));
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 1;
+    -fx-padding: 12 16 12 16;
+}
+.rankup-card-ap { -fx-min-width: 150; -fx-pref-width: 150; -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.09), rgba(255,255,255,0.025)); }
+.rankup-chev-icon { -fx-stroke: -av-text-mute; -fx-stroke-width: 1.8; -fx-stroke-line-cap: round; -fx-stroke-line-join: round; }
+
+/* rank ladder under the header: tiny badges joined by links */
+.rankup-ladder-link { -fx-background-color: rgba(255,255,255,0.14); -fx-background-radius: 1; }
+
+.rankup-barwrap  { -fx-pref-width: 420; -fx-max-width: 420; }
+.rankup-bartext  { -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+.rankup-bar-tick { -fx-background-color: rgba(5, 7, 12, 0.55); }
+
+/* ── continue ─────────────────────────────────────────────────────────── */
+.rankup-continue   { -fx-pref-width: 230; -fx-font-size: 14px; }
+.rankup-arrow-icon { -fx-stroke: #ffffff; -fx-stroke-width: 1.8; -fx-stroke-line-cap: round; -fx-stroke-line-join: round; }
+
+/* ── footer ───────────────────────────────────────────────────────────── */
+.rankup-footer      { -fx-padding: 0 28 18 28; }
+.rankup-footer-text { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px; -fx-text-fill: -av-text-mute; }

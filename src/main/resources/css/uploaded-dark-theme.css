@@ -1,0 +1,697 @@
+/* ============================================================================
+   Avero Launcher — dark-theme.css  (Red/Orange Edition)
+   Matches the reference screenshot: dark navy base, red-orange accent palette,
+   hero banner with fantasy Minecraft art, sidebar with orange-red nav highlight.
+   ============================================================================ */
+
+* {
+    -fx-font-family: "Montserrat", "Segoe UI", sans-serif;
+    -accent:   #e8572a;
+    -accent-d: #c44420;
+    -accent-l: #ff7a4a;
+    -ink:      #0d1117;
+    -bg-0:     #0d1117;
+    -bg-1:     #111622;
+    -bg-2:     #16202e;
+    -panel: rgba(255,255,255,0.04);
+    -panel-border: rgba(255,255,255,0.08);
+}
+
+.root, .app-root {
+    -fx-base:                       #0d1117;
+    -fx-background:                 #0d1117;
+    -fx-control-inner-background:   #111622;
+    -fx-control-inner-background-alt: #111622;
+    -fx-text-background-color:      #f0ece8;
+    -fx-accent:                     #e8572a;
+    -fx-focus-color:                #e8572a;
+    -fx-faint-focus-color:          rgba(232,87,42,0.15);
+    -fx-selection-bar:              rgba(232,87,42,0.30);
+    -fx-selection-bar-non-focused:  rgba(232,87,42,0.15);
+
+    -fx-background-color: linear-gradient(to bottom right, #0d1117 0%, #111622 50%, #0d1117 100%);
+    -fx-text-fill: #f0ece8;
+}
+
+.label { -fx-text-fill: #f0ece8; }
+
+.scroll-pane, .scroll-pane .viewport, .scroll-pane .corner,
+.page-scroll, .page-scroll .viewport, .page-scroll .corner {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #0a0e16 0%, #0d1420 100%);
+    -fx-border-color: transparent rgba(255,255,255,0.07) transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.brand-label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 19px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 2;
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.30), 8, 0.1, 0, 0);
+}
+.brand-sublabel {
+    -fx-text-fill: #e8572a;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 3.5;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(240,236,232,0.60);
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 14 10 14;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+.nav-button:hover {
+    -fx-background-color: rgba(232,87,42,0.08);
+    -fx-text-fill: #f0ece8;
+}
+.nav-button:selected {
+    -fx-background-color: linear-gradient(to right, rgba(232,87,42,0.90), rgba(200,60,20,0.80));
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+.nav-icon, .nav-icon-fill { -fx-fill: rgba(240,236,232,0.60); }
+.nav-button:selected .nav-icon,
+.nav-button:selected .nav-icon-fill { -fx-fill: #ffffff; }
+
+.nav-indicator {
+    -fx-background-color: linear-gradient(to bottom, #e8572a, #ff7a4a);
+    -fx-background-radius: 3;
+}
+
+.sidebar-footer {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-border-color: rgba(255,255,255,0.06) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 14;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.top-bar {
+    -fx-background-color: linear-gradient(to right, rgba(16,20,30,0.75), rgba(13,17,23,0.75));
+    -fx-border-color: transparent transparent rgba(255,255,255,0.07) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 12 24 12 24;
+}
+.content-area { -fx-background-color: transparent; }
+.page-scroll .scroll-bar:vertical { -fx-background-color: transparent; -fx-pref-width: 10; }
+.page-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(232,87,42,0.25);
+    -fx-background-radius: 6;
+}
+.page-scroll .scroll-bar:vertical .track { -fx-background-color: transparent; }
+
+.page { -fx-background-color: transparent; }
+.page-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 25px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 0.3;
+}
+.page-subtitle {
+    -fx-text-fill: rgba(240,236,232,0.6);
+    -fx-font-size: 13px;
+}
+.title-accent { -fx-text-fill: #e8572a; }
+.section-header {
+    -fx-text-fill: #f0ece8;
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+}
+.card-title {
+    -fx-text-fill: #e8572a;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 2;
+}
+.feature-card-title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: 800;
+}
+.feature-card-desc {
+    -fx-text-fill: rgba(240,236,232,0.58);
+    -fx-font-size: 11.5px;
+    -fx-line-spacing: 1px;
+}
+
+/* ── Cards / panels ──────────────────────────────────────────────────── */
+.dashboard-card, .mod-card, .modpack-card, .partner-card, .recommended-card,
+.about-stat-card, .settings-section, .filters-panel {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.09), rgba(255,255,255,0.0) 40%),
+        linear-gradient(from 0% 0% to 36% 100%, rgba(232,87,42,0.06) 0%, rgba(18,22,36,0.60) 100%);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 14, 13;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(2,4,10,0.60), 18, 0, 0, 8);
+}
+.mod-card:hover, .modpack-card:hover, .partner-card:hover, .recommended-card:hover,
+.dashboard-card:hover, .about-stat-card:hover {
+    -fx-border-color: rgba(232,87,42,0.35);
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.20), 22, 0, 0, 10);
+}
+.recommended-badge {
+    -fx-background-color: linear-gradient(to bottom right, #e8a838, #e87070);
+    -fx-text-fill: #0d1117;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 10px;
+}
+
+.hero-banner {
+    -fx-background-color: linear-gradient(to bottom right, #0d1117 0%, #141824 30%, #1a2035 60%, #141824 80%, #0d1117 100%);
+    -fx-background-radius: 16;
+}
+.hero-eyebrow {
+    -fx-text-fill: #e8572a;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 2.5;
+}
+.hero-greeting {
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.25), 14, 0.10, 0, 2);
+}
+.hero-hint { -fx-text-fill: rgba(240,236,232,0.72); }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+
+/* Default plain button */
+.button {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: #f0ece8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+.button:hover { -fx-background-color: rgba(255,255,255,0.11); }
+.button:armed { -fx-background-color: rgba(255,255,255,0.15); }
+
+/* ── Primary — fiery red-to-amber (used everywhere a main action is needed) */
+.primary-button, .primary-cta-button, .btn-primary {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #6e0e0e 0%, #b83220 15%, #e8572a 38%, #ff8c3a 58%, #e06028 78%, #a02810 100%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 9, 9;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 800;
+    -fx-padding: 8 18 8 18;
+    -fx-cursor: hand;
+    -fx-effect:
+        dropshadow(gaussian, rgba(232,87,42,0.55), 14, 0.10, 0, 3),
+        dropshadow(gaussian, rgba(160,40,16,0.35), 28, 0.05, 0, 6);
+}
+.primary-button:hover, .primary-cta-button:hover, .btn-primary:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #8a1414 0%, #cc3c28 15%, #f06030 38%, #ffaa50 58%, #f07038 78%, #b83420 100%);
+    -fx-effect:
+        dropshadow(gaussian, rgba(232,87,42,0.75), 18, 0.12, 0, 4),
+        dropshadow(gaussian, rgba(160,40,16,0.50), 36, 0.06, 0, 8);
+}
+.primary-button:armed, .primary-cta-button:armed, .btn-primary:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #5a0a0a 0%, #a02a18 15%, #d44e22 38%, #f07828 58%, #d05020 78%, #8a2008 100%);
+}
+.primary-button:disabled, .primary-cta-button:disabled, .btn-primary:disabled {
+    -fx-opacity: 1;
+    -fx-background-color: rgba(232,87,42,0.16);
+    -fx-text-fill: rgba(240,236,232,0.50);
+    -fx-effect: none;
+}
+
+/* ── Secondary — ghost with glowing orange border */
+.secondary-button, .btn-secondary {
+    -fx-background-color:
+        linear-gradient(to bottom right, rgba(232,87,42,0.08) 0%, rgba(180,50,20,0.04) 100%);
+    -fx-background-radius: 9;
+    -fx-border-color:
+        linear-gradient(to bottom right, rgba(255,130,70,0.55), rgba(200,60,20,0.35));
+    -fx-border-radius: 9;
+    -fx-border-width: 1;
+    -fx-text-fill: #ff9060;
+    -fx-font-weight: 800;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.18), 10, 0.06, 0, 2);
+}
+.secondary-button:hover, .btn-secondary:hover {
+    -fx-background-color:
+        linear-gradient(to bottom right, rgba(232,87,42,0.16) 0%, rgba(180,50,20,0.08) 100%);
+    -fx-border-color:
+        linear-gradient(to bottom right, rgba(255,160,90,0.80), rgba(220,80,30,0.55));
+    -fx-text-fill: #ffaa78;
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.35), 14, 0.08, 0, 3);
+}
+.secondary-button:armed, .btn-secondary:armed {
+    -fx-background-color:
+        linear-gradient(to bottom right, rgba(180,50,20,0.22) 0%, rgba(130,30,10,0.12) 100%);
+}
+
+/* ── Success — forest-green to lime sweep */
+.success-button, .btn-success, .install-button {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #1a5c18 0%, #2a8a24 30%, #7ed957 55%, #4ab840 75%, #208018 100%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 9, 9;
+    -fx-text-fill: #0a1a08;
+    -fx-font-weight: 800;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+    -fx-effect:
+        dropshadow(gaussian, rgba(126,217,87,0.45), 12, 0.10, 0, 3),
+        dropshadow(gaussian, rgba(30,100,20,0.30), 24, 0.05, 0, 5);
+}
+.success-button:hover, .btn-success:hover, .install-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #206820 0%, #38a030 30%, #96ff66 55%, #60d050 75%, #2a9820 100%);
+    -fx-effect:
+        dropshadow(gaussian, rgba(126,217,87,0.65), 16, 0.12, 0, 4),
+        dropshadow(gaussian, rgba(30,100,20,0.45), 30, 0.06, 0, 7);
+}
+.success-button:armed, .btn-success:armed, .install-button:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #144014 0%, #208018 30%, #60b840 55%, #389028 75%, #186010 100%);
+}
+
+/* ── Danger — crimson to rose */
+.danger-button, .btn-danger, .uninstall-button, .delete-button {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #5a0808 0%, #9a1818 25%, #d63030 50%, #f06060 70%, #b02828 100%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 9, 9;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 800;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+    -fx-effect:
+        dropshadow(gaussian, rgba(210,60,60,0.50), 12, 0.10, 0, 3),
+        dropshadow(gaussian, rgba(100,10,10,0.35), 24, 0.05, 0, 5);
+}
+.danger-button:hover, .btn-danger:hover, .uninstall-button:hover, .delete-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #6e0e0e 0%, #b22020 25%, #e84040 50%, #ff7878 70%, #cc3030 100%);
+    -fx-effect:
+        dropshadow(gaussian, rgba(230,80,80,0.70), 16, 0.12, 0, 4),
+        dropshadow(gaussian, rgba(120,10,10,0.50), 30, 0.06, 0, 7);
+}
+.danger-button:armed, .btn-danger:armed, .uninstall-button:armed, .delete-button:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #480606 0%, #841414 25%, #c02828 50%, #e05050 70%, #982020 100%);
+}
+
+/* ── Violet — deep purple to bright lavender */
+.violet-button, .btn-violet, .changelog-button {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #2a1060 0%, #5a28a0 25%, #9b6cf0 50%, #c090ff 68%, #7a48c8 85%, #3a1880 100%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 9, 9;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 800;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+    -fx-effect:
+        dropshadow(gaussian, rgba(155,108,240,0.50), 12, 0.10, 0, 3),
+        dropshadow(gaussian, rgba(50,20,120,0.35), 24, 0.05, 0, 5);
+}
+.violet-button:hover, .btn-violet:hover, .changelog-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #3a1880 0%, #7038c0 25%, #b888ff 50%, #d8b0ff 68%, #9868e0 85%, #5028a0 100%);
+    -fx-effect:
+        dropshadow(gaussian, rgba(180,130,255,0.70), 16, 0.12, 0, 4),
+        dropshadow(gaussian, rgba(70,30,160,0.50), 30, 0.06, 0, 7);
+}
+.violet-button:armed, .btn-violet:armed, .changelog-button:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #1e0a48 0%, #481e80 25%, #7e58c8 50%, #a878e0 68%, #6038a8 85%, #2a1068 100%);
+}
+
+/* ── Play button (hero CTA) — richest multi-stop gradient */
+.login-button, .hero-play-button, .hero-setup-button, .hero-choose-version-button, .play-button {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.0) 45%),
+        linear-gradient(from 0% 0% to 100% 15%, #7b1010 0%, #b83018 12%, #e8572a 32%, #ff7a3a 50%, #e8622a 68%, #c04020 85%, #8a1e10 100%);
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 12, 12;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 800;
+    -fx-cursor: hand;
+    -fx-effect:
+        dropshadow(gaussian, rgba(232,87,42,0.60), 18, 0.10, 0, 4),
+        dropshadow(gaussian, rgba(140,30,10,0.40), 36, 0.06, 0, 9);
+}
+.login-button:hover, .hero-play-button:hover, .hero-setup-button:hover,
+.hero-choose-version-button:hover, .play-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 15%, #961414 0%, #d03c22 12%, #f0682e 32%, #ff9050 50%, #f07438 68%, #d05030 85%, #a02818 100%);
+    -fx-effect:
+        dropshadow(gaussian, rgba(255,110,50,0.80), 24, 0.12, 0, 5),
+        dropshadow(gaussian, rgba(160,40,16,0.55), 48, 0.07, 0, 12);
+}
+.login-button:armed, .hero-play-button:armed, .hero-setup-button:armed,
+.hero-choose-version-button:armed, .play-button:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 15%, #600c0c 0%, #9c2816 12%, #cc4e24 32%, #e86830 50%, #cc5224 68%, #a83418 85%, #701408 100%);
+}
+.play-page-cta { -fx-padding: 16 28 16 24; -fx-background-radius: 12; }
+.play-page-cta:disabled { -fx-opacity: 0.45; }
+.play-button-arrow   { -fx-text-fill: #ffffff; -fx-font-size: 15px; -fx-effect: dropshadow(gaussian, rgba(255,200,150,0.6), 8, 0.15, 0, 0); }
+.play-button-label   { -fx-text-fill: #ffffff; -fx-font-size: 17px; -fx-font-weight: 800; -fx-letter-spacing: 0.6; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0.10, 0, 1); }
+.play-button-divider { -fx-background-color: linear-gradient(to bottom, transparent, rgba(255,255,255,0.30), transparent); }
+.play-button-chevron { -fx-text-fill: rgba(255,255,255,0.80); -fx-font-size: 13px; }
+
+/* ── Tab buttons ─────────────────────────────────────────────────────── */
+.play-tab-bar {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 10;
+    -fx-padding: 4;
+}
+.play-tab-button, .type-tab-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(240,236,232,0.6);
+    -fx-background-radius: 8;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+.play-tab-button:selected, .type-tab-button:selected {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.0) 50%),
+        linear-gradient(from 0% 0% to 100% 20%, #6e0e0e 0%, #b83220 15%, #e8572a 38%, #ff8c3a 58%, #e06028 78%, #a02810 100%);
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.40), 10, 0.08, 0, 2);
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────── */
+.combo-box, .text-field, .text-area, .search-field, .check-box {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-text-fill: #f0ece8;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-radius: 8;
+}
+.combo-box .list-cell, .combo-box-popup .list-view {
+    -fx-background-color: #111622;
+    -fx-text-fill: #f0ece8;
+}
+.list-cell:filled:hover    { -fx-background-color: rgba(232,87,42,0.15); }
+.list-cell:filled:selected { -fx-background-color: rgba(232,87,42,0.30); }
+.text-area .content { -fx-background-color: rgba(0,0,0,0.25); }
+.search-field-input { -fx-background-color: transparent; -fx-text-fill: #f0ece8; }
+.search-field-icon  { -fx-fill: rgba(240,236,232,0.5); }
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #c44420, #e8572a);
+    -fx-background-radius: 6;
+}
+.progress-bar > .track {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 6;
+}
+
+/* ── Status chips / pills ────────────────────────────────────────────── */
+.status-chip, .about-status-pill, .modpack-card-tag, .mod-tag, .partner-mode-badge {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 6;
+    -fx-padding: 3 8 3 8;
+    -fx-font-size: 10px;
+    -fx-text-fill: rgba(240,236,232,0.80);
+}
+.status-ok, .about-status-active { -fx-background-color: rgba(126,217,87,0.18); -fx-text-fill: #7ed957; }
+.status-warn { -fx-background-color: rgba(232,168,56,0.18); -fx-text-fill: #e8a838; }
+
+.status-chip-title {
+    -fx-text-fill: rgba(240,236,232,0.55);
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1.2;
+}
+.status-chip-detail {
+    -fx-text-fill: #f0ece8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+}
+
+.first-run-banner {
+    -fx-background-color: linear-gradient(to right, rgba(232,87,42,0.16), rgba(200,80,40,0.10));
+    -fx-border-color: transparent transparent rgba(255,255,255,0.08) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.account-chip, .avatar-circle, .profile-avatar {
+    -fx-background-color: linear-gradient(to bottom right, #c44420, #e8572a);
+    -fx-background-radius: 20;
+}
+.avatar-initial { -fx-text-fill: #ffffff; -fx-font-weight: bold; }
+.account-name   { -fx-text-fill: #f0ece8; -fx-font-weight: bold; }
+.account-tag    { -fx-text-fill: rgba(240,236,232,0.55); -fx-font-size: 10px; }
+
+/* ── Partner-card / profile-card text ───────────────────────────────── */
+.partner-name {
+    -fx-text-fill: #f0ece8;
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+}
+.partner-desc { -fx-text-fill: rgba(240,236,232,0.6); -fx-font-size: 11.5px; }
+.partner-ip   { -fx-text-fill: rgba(240,236,232,0.75); }
+.profile-name {
+    -fx-text-fill: #f0ece8;
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+}
+.profile-tag   { -fx-text-fill: rgba(240,236,232,0.55); -fx-font-size: 11px; }
+.footer-title  { -fx-text-fill: #f0ece8; -fx-font-size: 12px; -fx-font-weight: 700; }
+.version-label { -fx-text-fill: rgba(240,236,232,0.45); -fx-font-size: 10px; }
+
+/* ── Tooltips ────────────────────────────────────────────────────────── */
+.tooltip {
+    -fx-background-color: #111622;
+    -fx-text-fill: #f0ece8;
+    -fx-background-radius: 6;
+}
+.card-link       { -fx-text-fill: #e8572a; -fx-underline: false; }
+.card-link:hover { -fx-underline: true; }
+
+/* ── Activity / changelog tabs ───────────────────────────────────────── */
+.changelog-tabs, .changelog-tabs .tab-content-area {
+    -fx-background-color: transparent;
+}
+.changelog-tabs .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent rgba(255,255,255,0.08) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.changelog-tabs .tab-header-area { -fx-padding: 0 0 0 0; }
+.changelog-tabs .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 9 4 9 4;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.changelog-tabs .tab-container { -fx-padding: 0 14 0 0; }
+.changelog-tabs .tab:hover .tab-label { -fx-text-fill: #f0ece8; }
+.changelog-tabs .tab:selected {
+    -fx-border-color: transparent transparent #e8572a transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.changelog-tabs .tab .tab-label {
+    -fx-text-fill: rgba(240,236,232,0.5);
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 1.4;
+}
+.changelog-tabs .tab:selected .tab-label { -fx-text-fill: #e8572a; }
+.changelog-tabs .tab-down-button, .changelog-tabs .tab-up-button { -fx-background-color: transparent; }
+
+.news-row, .change-row {
+    -fx-padding: 0 0 12 0;
+    -fx-border-color: transparent transparent rgba(255,255,255,0.05) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.news-thumb {
+    -fx-background-color: linear-gradient(to bottom right, rgba(232,87,42,0.30), rgba(200,60,20,0.15));
+    -fx-background-radius: 8;
+}
+.news-title, .change-title {
+    -fx-text-fill: #f0ece8;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 700;
+}
+.news-desc, .change-desc {
+    -fx-text-fill: rgba(240,236,232,0.55);
+    -fx-font-size: 11px;
+}
+.news-time {
+    -fx-background-color: rgba(126,217,87,0.18);
+    -fx-text-fill: #7ed957;
+    -fx-font-size: 9px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 5;
+    -fx-padding: 2 7 2 7;
+    -fx-letter-spacing: 0.6;
+}
+.change-time {
+    -fx-text-fill: rgba(240,236,232,0.40);
+    -fx-font-size: 10px;
+}
+.change-icon {
+    -fx-background-color: linear-gradient(to bottom right, rgba(232,87,42,0.25), rgba(200,60,20,0.08));
+    -fx-background-radius: 9;
+}
+.change-icon-glyph {
+    -fx-text-fill: #e8572a;
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+}
+
+/* ── About page ──────────────────────────────────────────────────────── */
+.about-app-name {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+.about-tagline { -fx-text-fill: rgba(240,236,232,0.62); -fx-font-size: 12.5px; }
+.about-stat-title {
+    -fx-text-fill: rgba(240,236,232,0.55);
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 1.1;
+}
+.about-stat-value    { -fx-text-fill: #f0ece8; -fx-font-size: 13.5px; -fx-font-weight: 700; }
+.about-stat-subvalue { -fx-text-fill: rgba(240,236,232,0.5); -fx-font-size: 10.5px; }
+.about-status-off    { -fx-background-color: rgba(255,255,255,0.08); -fx-text-fill: rgba(240,236,232,0.55); }
+.about-status-standby { -fx-background-color: rgba(232,168,56,0.18); -fx-text-fill: #e8a838; }
+.about-path-row {
+    -fx-background-color: rgba(255,255,255,0.035);
+    -fx-background-radius: 10;
+    -fx-padding: 10 12 10 12;
+}
+.about-path-label {
+    -fx-text-fill: rgba(240,236,232,0.5);
+    -fx-font-size: 9.5px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 1;
+}
+.about-path-value { -fx-text-fill: #f0ece8; -fx-font-size: 11.5px; -fx-font-family: monospace; }
+.about-copied     { -fx-text-fill: #7ed957; -fx-font-size: 11px; -fx-font-weight: 700; }
+.about-mirror-note { -fx-text-fill: rgba(240,236,232,0.55); -fx-font-size: 11.5px; }
+.about-tag {
+    -fx-background-color: rgba(232,87,42,0.10);
+    -fx-border-color: rgba(232,87,42,0.25);
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-text-fill: rgba(240,236,232,0.75);
+    -fx-font-size: 10.5px;
+    -fx-padding: 4 9 4 9;
+}
+.about-legal { -fx-text-fill: rgba(240,236,232,0.4); -fx-font-size: 10.5px; }
+
+/* ── Mods page ───────────────────────────────────────────────────────── */
+.mods-toolbar {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 12;
+    -fx-padding: 10 12 10 12;
+}
+.content-type-tabs {
+    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+}
+.mod-card-thumb {
+    -fx-background-color: linear-gradient(to bottom right, rgba(232,87,42,0.22), rgba(200,60,20,0.10));
+    -fx-background-radius: 10 10 0 0;
+}
+.mod-card-title  { -fx-text-fill: #f0ece8; -fx-font-size: 13.5px; -fx-font-weight: 800; }
+.mod-card-author { -fx-text-fill: rgba(240,236,232,0.5); -fx-font-size: 10.5px; }
+.mod-card-desc   { -fx-text-fill: rgba(240,236,232,0.6); -fx-font-size: 11px; }
+.mod-card-stat {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 5;
+    -fx-padding: 2 7 2 7;
+    -fx-text-fill: rgba(240,236,232,0.65);
+    -fx-font-size: 10px;
+}
+
+/* ── Modpack / server cards ──────────────────────────────────────────── */
+.modpack-card-icon {
+    -fx-background-color: linear-gradient(to bottom right, #c44420, #e8572a);
+    -fx-background-radius: 10;
+    -fx-min-width: 42; -fx-min-height: 42;
+    -fx-pref-width: 42; -fx-pref-height: 42;
+    -fx-max-width: 42; -fx-max-height: 42;
+}
+.modpack-card-icon-label { -fx-text-fill: #ffffff; -fx-font-size: 16px; -fx-font-weight: 800; }
+.modpack-card-name       { -fx-text-fill: #f0ece8; -fx-font-size: 12.5px; -fx-font-weight: 700; }
+.modpack-card-meta       { -fx-text-fill: rgba(240,236,232,0.5); -fx-font-size: 10.5px; }
+.modpack-empty-hint      { -fx-text-fill: rgba(240,236,232,0.45); -fx-font-size: 11.5px; }
+
+/* ── Versions page ───────────────────────────────────────────────────── */
+.version-id-label { -fx-text-fill: #f0ece8; -fx-font-size: 12.5px; -fx-font-weight: 700; }
+.version-type-label {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 5;
+    -fx-padding: 2 7 2 7;
+    -fx-text-fill: rgba(240,236,232,0.60);
+    -fx-font-size: 9.5px;
+    -fx-font-weight: 700;
+    -fx-letter-spacing: 0.6;
+}
+
+/* ── Play page ───────────────────────────────────────────────────────── */
+.play-card-hint { -fx-text-fill: rgba(240,236,232,0.55); -fx-font-size: 11.5px; }
+
+/* ── Home page extras ────────────────────────────────────────────────── */
+.activity-empty { -fx-text-fill: rgba(240,236,232,0.45); -fx-font-size: 11.5px; }
+.profile-banner {
+    -fx-background-color: linear-gradient(to bottom right, #1e1410 0%, #2a1a10 100%);
+}
+.profile-ice-footer {
+    -fx-background-color: linear-gradient(to bottom, rgba(232,87,42,0.18), rgba(232,87,42,0.03));
+}
+
+/* ── Sliders ─────────────────────────────────────────────────────────── */
+.slider .track {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+    -fx-pref-height: 6;
+}
+.slider .thumb {
+    -fx-background-color: linear-gradient(to bottom right, #c44420, #e8572a);
+    -fx-background-radius: 1.0em;
+    -fx-background-insets: 0;
+    -fx-pref-width: 15;
+    -fx-pref-height: 15;
+    -fx-effect: dropshadow(gaussian, rgba(232,87,42,0.55), 7, 0.25, 0, 1);
+}
+.slider .thumb:hover, .slider:focused .thumb {
+    -fx-background-color: linear-gradient(to bottom right, #d44e2a, #ff6a3a);
+}
+.slider .axis { -fx-tick-label-fill: rgba(240,236,232,0.45); }

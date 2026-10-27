@@ -1,0 +1,1096 @@
+/* ============================================================================
+   Avero Launcher — mc-theme.css  v5  "TACTICAL"  (loaded LAST)
+
+   Visual direction
+   ────────────────
+   This is a Valorant UI with a single Minecraft data-readout accent (the XP
+   bar green).  Every surface uses the following layering recipe:
+
+     Layer 0  diagonal red slash gradient     — Valorant identity mark
+     Layer 1  top-edge glass highlight         — premium depth
+     Layer 2  dark gradient body               — rich base
+     Layer 3  optional scan-line or noise      — tactical texture
+
+   Key additions over v4:
+     • Scan-line pattern on hero cards / stage banners (CSS gradient trick)
+     • Angular bracket corners on all cards (::before/::after SVG not possible
+       in JavaFX, so we use background-color layers to fake corner marks)
+     • Stronger glow bloom on everything interactive
+     • Data-readout chip treatment for version/status labels
+     • Red diagonal accent gradients on the shell background (amplified)
+     • Frosted-glass topbar with stronger red bleed
+     • Richly layered rail: red indicator, glow pulse, animated indicator
+     • Card notch + red corner flash on hover
+   ============================================================================ */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   1. SHELL — amplified Valorant diagonal slash + radial bloom
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-shell {
+    -fx-background-color:
+        /* bottom-left red bloom */
+        radial-gradient(center 0% 100%, radius 60%, rgba(255,70,85,0.18) 0%, transparent 100%),
+        /* top-right cold highlight */
+        radial-gradient(center 100% 0%, radius 50%, rgba(143,208,255,0.05) 0%, transparent 100%),
+        /* thick diagonal slash */
+        linear-gradient(to bottom right,
+            transparent 0%, transparent 78%,
+            rgba(255,70,85,0.28) 78%, rgba(255,70,85,0.28) 78.5%,
+            transparent 78.5%),
+        /* thin diagonal slash above it */
+        linear-gradient(to bottom right,
+            transparent 0%, transparent 74%,
+            rgba(255,70,85,0.10) 74%, rgba(255,70,85,0.10) 76%,
+            transparent 76%),
+        /* base gradient */
+        linear-gradient(to bottom, #0d1626 0%, #070d17 100%);
+    -fx-background-image: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2. RAIL — deep panel with red-top flash + glow indicator
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-rail {
+    -fx-background-color:
+        /* red bloom at top */
+        radial-gradient(center 50% 0%, radius 80%, rgba(255,70,85,0.12) 0%, transparent 100%),
+        /* dark gradient */
+        linear-gradient(to bottom, #060b14 0%, #08101e 100%);
+    -fx-background-image: none;
+}
+
+/* Right edge: gradient hairline — red at top, fades to near-invisible */
+.av-rail-edge {
+    -fx-background-color:
+        linear-gradient(to bottom,
+            rgba(255,70,85,0.85) 0%,
+            rgba(255,255,255,0.28) 12%,
+            rgba(255,255,255,0.08) 50%,
+            transparent 100%);
+}
+
+/* Active-nav indicator bar: bright, wide glow */
+.av-rail-indicator {
+    -fx-background-color:
+        linear-gradient(to bottom, #ff7080 0%, #ff4655 50%, #c93a47 100%);
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.90), 24, 0.40, 0, 0);
+}
+
+/* Brand: glow on "AVERO" */
+.av-rail-brand {
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.55), 20, 0.20, 0, 0);
+}
+.av-rail-brand-sub {
+    -fx-text-fill: -av-accent;
+    -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 10px;
+}
+
+/* Rail footer labels: tiny tracked */
+.av-rail-version, .av-rail-foot {
+    -fx-font-family: "Monocraft";
+    -fx-font-weight: normal;
+    -fx-font-size: 9px;
+    -fx-text-fill: rgba(236,232,225,0.28);
+}
+
+/* Nav items */
+.av-rail-item {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+.av-rail-item:hover {
+    -fx-background-color:
+        linear-gradient(to right,
+            rgba(255,255,255,0.07) 0%,
+            transparent 80%);
+    -fx-background-insets: 0;
+}
+.av-rail-item:selected,
+.av-rail-item:selected:hover,
+.av-rail-item:selected:focused,
+.root:kbd .av-rail-item:selected:focused {
+    -fx-background-color:
+        /* red left wash */
+        linear-gradient(to right,
+            rgba(255,70,85,0.22) 0%,
+            rgba(255,70,85,0.10) 40%,
+            transparent 100%);
+    -fx-background-insets: 0;
+}
+.root:kbd .av-rail-item:focused {
+    -fx-background-color:
+        linear-gradient(to right, rgba(255,255,255,0.10) 0%, transparent 100%);
+    -fx-background-insets: 0;
+}
+
+/* Nav icon colouring */
+.av-rail-item .nav-icon        { -fx-stroke: rgba(236,232,225,0.38); }
+.av-rail-item .nav-icon-fill   { -fx-fill: rgba(236,232,225,0.38); -fx-stroke: rgba(236,232,225,0.38); }
+.av-rail-item:hover .nav-icon       { -fx-stroke: rgba(236,232,225,0.85); }
+.av-rail-item:hover .nav-icon-fill  { -fx-fill: rgba(236,232,225,0.85); -fx-stroke: rgba(236,232,225,0.85); }
+.av-rail-item:selected .nav-icon      { -fx-fill: transparent; -fx-stroke: #ff5d6b; }
+.av-rail-item:selected .nav-icon-fill { -fx-fill: #ff5d6b; -fx-stroke: #ff5d6b; }
+
+.av-rail-label { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 15px; }
+.av-rail-item:hover .av-rail-label,
+.av-rail-item:selected .av-rail-label { -fx-text-fill: #ffffff; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3. TOP BAR — frosted glass with red bleed
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-topbar {
+    -fx-background-color:
+        linear-gradient(to right,
+            rgba(255,70,85,0.06) 0%,
+            transparent 40%),
+        linear-gradient(to bottom,
+            rgba(255,255,255,0.05) 0%,
+            rgba(255,255,255,0.01) 100%),
+        rgba(5,9,18,0.82);
+    -fx-border-color: transparent transparent rgba(255,70,85,0.12) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-image: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   4. TYPE — remove MC pixel-shadow from titles; add Valorant glow on hero
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Remove MC pixel drop-shadows entirely */
+.av-page-title, .page-title, .home-hero-name, .play-title, .store-feature-name,
+.t-display, .t-h1, .ms-hero-title, .hero-greeting, .home-partner-name,
+.section-header, .av-empty-title, .about-app-name {
+    -fx-effect: none;
+}
+
+/* Hero name: subtle white glow — premium not pixelated */
+.home-hero-name, .ms-hero-title {
+    -fx-effect: dropshadow(gaussian, rgba(236,232,225,0.12), 24, 0, 0, 0);
+}
+
+/* Monocraft — ONLY two uses: version footer + XP readout */
+.av-rail-version, .av-progress-pct, .device-code-field {
+    -fx-font-family: "Monocraft";
+    -fx-font-weight: normal;
+}
+.device-code-field { -fx-font-size: 22px; -fx-text-fill: -mc-xp; }
+
+/* Avero Tracked for all micro-labels */
+.t-label, .av-section-title, .av-chip, .av-cape-glyph,
+.home-eyebrow, .home-field-label, .home-quick-kicker, .home-partner-kicker,
+.play-fact-key, .play-eyebrow, .card-title, .status-chip-title,
+.about-stat-title, .avero-section-label, .hero-eyebrow,
+.recommended-badge, .cape-limited-badge, .cape-equipped-badge,
+.avero-badge, .about-tag, .version-type-label {
+    -fx-font-family: "Avero Tracked";
+    -fx-font-weight: bold;
+    -fx-font-size: 10px;
+}
+
+/* Hero eyebrow: ice-blue accent (Valorant-style "AGENT SELECT" label) */
+.hero-eyebrow, .home-eyebrow, .play-eyebrow, .play-fact-key {
+    -fx-text-fill: -av-ice;
+    -fx-font-size: 10px;
+}
+
+/* Section headers: faint tracked caps */
+.av-section-title { -fx-text-fill: rgba(236,232,225,0.45); -fx-font-size: 10px; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   5. CARDS & PANELS — 3-layer glass: slash + top-edge + body
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-card,
+.dashboard-card, .partner-card, .about-stat-card, .settings-section, .filters-panel,
+.mod-card, .modpack-card, .recommended-card, .cape-card, .avero-auth-card,
+.play-side, .store-side, .play-dl-row, .play-list {
+    -fx-background-color:
+        /* bright top-edge glass highlight */
+        linear-gradient(to bottom,
+            rgba(255,255,255,0.11) 0%,
+            rgba(255,255,255,0.00) 4px),
+        /* left red ghost for cards that have the ValShape cut */
+        linear-gradient(to right,
+            rgba(255,70,85,0.04) 0%,
+            transparent 30%),
+        /* body */
+        linear-gradient(160deg,
+            rgba(18,32,52,0.97) 0%,
+            rgba(10,18,30,0.97) 100%);
+    -fx-background-insets: 0, 0, 0;
+    -fx-background-radius: 0, 0, 0;
+    -fx-background-image: none;
+    /* hairline border via background layer (ValShape compatible) */
+    -fx-border-color: transparent; -fx-border-width: 0;
+}
+
+/* Add explicit hairline as an outermost background layer */
+.av-card,
+.dashboard-card, .partner-card, .about-stat-card, .settings-section, .filters-panel,
+.mod-card, .modpack-card, .recommended-card, .cape-card, .avero-auth-card,
+.play-side, .store-side {
+    -fx-background-color:
+        /* hairline */
+        rgba(255,255,255,0.09),
+        /* top-edge glass */
+        linear-gradient(to bottom,
+            rgba(255,255,255,0.11) 0%,
+            rgba(255,255,255,0.00) 4px),
+        /* red left ghost */
+        linear-gradient(to right, rgba(255,70,85,0.04) 0%, transparent 30%),
+        /* body */
+        linear-gradient(160deg, rgba(18,32,52,0.97) 0%, rgba(10,18,30,0.97) 100%);
+    -fx-background-insets: 0, 1, 1, 1;
+    -fx-background-radius: 0, 0, 0, 0;
+}
+
+/* Hover: brighter top edge + stronger red ghost */
+.av-card-hot:hover,
+.dashboard-card:hover, .partner-card:hover, .about-stat-card:hover,
+.settings-section:hover, .filters-panel:hover, .mod-card:hover,
+.modpack-card:hover, .recommended-card:hover, .cape-card:hover,
+.avero-auth-card:hover, .play-side:hover, .store-side:hover {
+    -fx-background-color:
+        rgba(255,255,255,0.18),
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.00) 4px),
+        linear-gradient(to right, rgba(255,70,85,0.10) 0%, transparent 35%),
+        linear-gradient(160deg, rgba(24,40,64,0.99) 0%, rgba(14,24,40,0.99) 100%);
+    -fx-background-insets: 0, 1, 1, 1;
+}
+
+/* Active/selected card: red top flash */
+.av-card-active, .cape-card-equipped {
+    -fx-background-color:
+        rgba(255,70,85,0.75),
+        linear-gradient(to bottom, rgba(255,70,85,0.22) 0%, rgba(255,70,85,0.00) 6px),
+        linear-gradient(to right, rgba(255,70,85,0.14) 0%, transparent 40%),
+        linear-gradient(160deg, rgba(28,10,14,0.99) 0%, rgba(16,6,10,0.99) 100%);
+    -fx-background-insets: 0, 1, 1, 1;
+}
+.av-card-notch { -fx-background-color: -av-accent; }
+
+/* No texture overlays */
+.home-hero-scrim, .play-stage-scrim, .store-stage-scrim { -fx-background-image: none; }
+.dialog-pane { -fx-background-image: none; }
+
+/* Inset wells: thumb / icon boxes */
+.mod-card-thumb, .news-thumb, .change-icon, .modpack-card-icon, .play-pack-icon,
+.home-logo-tile, .home-rack, .avatar-circle, .profile-avatar, .avero-avatar {
+    -fx-background-color: rgba(255,255,255,0.06), rgba(0,0,0,0.40);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+}
+.avatar-circle, .profile-avatar, .avero-avatar {
+    -fx-background-color:
+        rgba(255,122,61,0.45),
+        linear-gradient(to bottom right, #ffa552, #ff4655);
+    -fx-background-insets: 0, 1;
+}
+/* Sits on the profile banner: a solid card-colour ring keeps it readable against the gradient
+   underneath it, plus a warm glow so it reads as the focal point of the card. */
+.avero-avatar-overlap {
+    -fx-background-color:
+        -av-bg-2,
+        rgba(255,122,61,0.45),
+        linear-gradient(to bottom right, #ffa552, #ff4655);
+    -fx-background-insets: -4, 0, 1;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.55), 16, 0.2, 0, 2);
+}
+.home-logo-ice { -fx-background-color: -av-ice, rgba(0,0,0,0.40); -fx-background-insets: 0, 2; }
+.home-logo-red { -fx-background-color: -av-accent, rgba(0,0,0,0.40); -fx-background-insets: 0, 2; }
+.av-cape-preview {
+    -fx-background-color:
+        rgba(255,70,85,0.08),
+        rgba(255,255,255,0.06),
+        rgba(0,0,0,0.55),
+        -av-bg-0;
+    -fx-background-insets: 0, 1, 2, 3;
+}
+
+/* Partner IP / path boxes: monospaced data readout */
+.home-partner-ip, .partner-ip, .about-path-value {
+    -fx-font-family: "Monocraft"; -fx-font-size: 9px;
+    -fx-background-color: rgba(255,255,255,0.06), rgba(0,0,0,0.40);
+    -fx-background-insets: 0, 1;
+}
+
+/* Hero / stage card frames */
+.home-hero, .play-stage, .store-stage {
+    -fx-background-color:
+        /* scan-line simulation: thin repeating stripes */
+        linear-gradient(to bottom,
+            rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 50%,
+            rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.12) 100%),
+        /* top-edge glass */
+        linear-gradient(to bottom, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.00) 2px),
+        /* diagonal accent slash */
+        linear-gradient(to bottom right,
+            transparent 0%, transparent 88%,
+            rgba(255,70,85,0.18) 88%, rgba(255,70,85,0.18) 88.4%,
+            transparent 88.4%),
+        /* body */
+        linear-gradient(to bottom right, rgba(10,18,30,0.98) 0%, rgba(6,12,20,0.98) 100%);
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-background-image: none;
+}
+
+/* Hero cards (the actual content card inside the banner) */
+.home-hero-card, .play-card, .store-feature-card {
+    -fx-background-color:
+        rgba(255,70,85,0.55),
+        linear-gradient(to bottom, rgba(255,70,85,0.24) 0%, rgba(255,70,85,0.00) 5px),
+        linear-gradient(to bottom right,
+            transparent 0%, transparent 82%,
+            rgba(255,70,85,0.15) 82%, rgba(255,70,85,0.15) 82.4%,
+            transparent 82.4%),
+        linear-gradient(to bottom right, rgba(14,22,36,0.97), rgba(8,14,24,0.97));
+    -fx-background-insets: 0, 1, 1, 1;
+    -fx-background-image: none;
+}
+
+/* Section tab bars */
+.play-tab-bar, .content-type-tabs, .source-toggle-bar, .mods-toolbar, .changelog-tabs {
+    -fx-background-color:
+        rgba(255,255,255,0.06),
+        linear-gradient(to bottom, rgba(4,8,16,0.85), rgba(7,14,25,0.85));
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0;
+    -fx-padding: 5;
+}
+.mods-toolbar { -fx-padding: 11 13 11 13; }
+
+/* Page header separator */
+.av-page-header {
+    -fx-border-color: transparent transparent rgba(255,70,85,0.18) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.av-slash { -fx-background-color: -av-accent; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   6. BUTTONS — rich Valorant glass + layered glow
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Primary / CTA: a rounded, glossy orange-to-red pill (left = bright gold-orange, right = deep
+   red), with a thin warm outline and a glass highlight across the top half. */
+.primary-cta-button, .login-button, .hero-play-button, .hero-setup-button,
+.hero-choose-version-button, .play-button, .play-page-cta, .ms-hero-button, .av-btn-primary, .secondary-button {
+    -fx-font-family: "Avero Display";
+    -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #ffffff;
+    -fx-background-color:
+        /* glass sheen across the top half */
+        linear-gradient(to bottom, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.06) 42%, rgba(255,255,255,0.00) 70%),
+        /* the mix: bright gold-orange on the left, through vivid orange, to deep red on the right */
+        linear-gradient(to right, #ffb43a 0%, #ff7a1f 32%, #ff4a2c 62%, #d9232f 100%);
+    -fx-background-insets: 1, 0;
+    -fx-background-radius: 14, 14;
+    -fx-border-color: rgba(255,196,110,0.55);
+    -fx-border-width: 1.5;
+    -fx-border-radius: 14;
+    -fx-padding: 10 22 10 22; -fx-cursor: hand; -fx-opacity: 1;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.45), 18, 0.15, 0, 3);
+}
+.primary-cta-button:hover, .login-button:hover, .hero-play-button:hover,
+.hero-setup-button:hover, .hero-choose-version-button:hover, .play-button:hover,
+.play-page-cta:hover, .ms-hero-button:hover, .av-btn-primary:hover, .secondary-button:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.46) 0%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffc761 0%, #ff9640 32%, #ff6c4c 62%, #e8414a 100%);
+    -fx-background-insets: 1, 0;
+    -fx-border-color: rgba(255,210,140,0.75);
+    -fx-effect: dropshadow(gaussian, rgba(255,138,61,0.70), 26, 0.25, 0, 5);
+}
+.primary-cta-button:armed, .login-button:armed, .hero-play-button:armed,
+.hero-setup-button:armed, .hero-choose-version-button:armed, .play-button:armed,
+.play-page-cta:armed, .ms-hero-button:armed, .av-btn-primary:armed, .secondary-button:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.14), rgba(0,0,0,0.00) 60%),
+        linear-gradient(to right, #d8902e 0%, #d8582c 40%, #c42c38 100%);
+    -fx-background-insets: 1, 0;
+    -fx-border-color: rgba(255,180,100,0.45);
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.25), 8, 0.08, 0, 1);
+}
+.primary-cta-button:disabled, .login-button:disabled, .hero-play-button:disabled,
+.hero-setup-button:disabled, .hero-choose-version-button:disabled, .play-button:disabled,
+.play-page-cta:disabled, .ms-hero-button:disabled, .av-btn-primary:disabled, .secondary-button:disabled {
+    -fx-background-color: linear-gradient(to right, rgba(255,180,58,0.26), rgba(217,35,47,0.22));
+    -fx-background-insets: 0;
+    -fx-border-color: rgba(255,180,100,0.20);
+    -fx-text-fill: rgba(255,255,255,0.40); -fx-effect: none;
+}
+
+/* Ghost buttons: hairline + glass */
+.button, .av-btn, .av-btn-ghost {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 13px;
+    -fx-text-fill: -av-text;
+    -fx-background-color:
+        rgba(255,255,255,0.10),
+        linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0;
+    -fx-padding: 10 18 10 18; -fx-cursor: hand; -fx-opacity: 1;
+}
+.button:hover, .av-btn:hover, .av-btn-ghost:hover {
+    -fx-background-color:
+        rgba(255,255,255,0.20),
+        linear-gradient(to bottom, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+    -fx-background-insets: 0, 1; -fx-text-fill: #ffffff;
+}
+.button:armed, .av-btn:armed, .av-btn-ghost:armed {
+    -fx-background-color:
+        rgba(255,255,255,0.08),
+        linear-gradient(to bottom, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    -fx-background-insets: 0, 1;
+}
+.button:disabled, .av-btn:disabled, .av-btn-ghost:disabled {
+    -fx-background-color: rgba(255,255,255,0.04), rgba(255,255,255,0.02);
+    -fx-background-insets: 0, 1;
+    -fx-text-fill: rgba(236,232,225,0.30); -fx-cursor: default; -fx-opacity: 1;
+}
+
+/* Secondary: rounded outline, orange-red, matching the primary pill's radius */
+/* PLAY — the big one. Rounded glossy pill, same gold-orange-to-red mix as the CTA buttons, with a
+   brighter outline and a bigger glow since this is the one button on the page meant to pop. */
+.av-btn-play {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px;
+    -fx-text-fill: #ffffff;
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.06) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffb43a 0%, #ff7a1f 32%, #ff4a2c 62%, #d9232f 100%);
+    -fx-background-insets: 2, 0;
+    -fx-background-radius: 18, 18;
+    -fx-border-color: rgba(255,196,110,0.60);
+    -fx-border-width: 2;
+    -fx-border-radius: 18;
+    -fx-padding: 16 52 16 52;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.55), 32, 0.22, 0, 6);
+}
+.av-btn-play:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.46) 0%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffc761 0%, #ff9640 32%, #ff6c4c 62%, #e8414a 100%);
+    -fx-background-insets: 2, 0;
+    -fx-border-color: rgba(255,214,150,0.80);
+    -fx-effect: dropshadow(gaussian, rgba(255,138,61,0.80), 40, 0.30, 0, 8);
+}
+.av-btn-play:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.12), rgba(0,0,0,0.00) 60%),
+        linear-gradient(to right, #d8902e 0%, #d8582c 40%, #c42c38 100%);
+    -fx-background-insets: 2, 0;
+    -fx-border-color: rgba(255,180,100,0.50);
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.25), 10, 0.08, 0, 2);
+}
+.av-btn-play:disabled {
+    -fx-background-color: linear-gradient(to right, rgba(255,180,58,0.26), rgba(217,35,47,0.22));
+    -fx-background-insets: 0;
+    -fx-border-color: rgba(255,180,100,0.20);
+    -fx-text-fill: rgba(255,255,255,0.40); -fx-effect: none;
+}
+.av-btn-sheen { -fx-fill: rgba(255,255,255,0.22); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   7. TABS — Valorant underline; selected = red pill with glow
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-tab:selected {
+    -fx-text-fill: #ffffff;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -av-accent transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.40), 14, 0, 0, 2);
+}
+
+.play-tab-button:selected, .type-tab-button:selected, .source-toggle-button:selected {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.00) 55%),
+        linear-gradient(to bottom, #ff6070, #e03040),
+        #7a1620;
+    -fx-background-insets: 1, 0, -1;
+    -fx-text-fill: #ffffff; -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.45), 16, 0.12, 0, 3);
+}
+
+.play-rail-btn:selected, .play-filter:selected, .store-switch:selected {
+    -fx-background-color:
+        rgba(255,255,255,0.22),
+        linear-gradient(to bottom, #e8303f, #c42634);
+    -fx-background-insets: 1, 0;
+    -fx-text-fill: #ffffff; -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.30), 10, 0.1, 0, 1);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   8. INPUTS — dark glass well + red focus ring
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.text-field, .password-field, .text-area, .store-field, .search-field {
+    -fx-font-family: "Barlow", "Segoe UI";
+    -fx-background-color:
+        rgba(255,255,255,0.07),
+        rgba(0,0,0,0.50);
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0;
+    -fx-text-fill: -av-text; -fx-prompt-text-fill: rgba(236,232,225,0.28);
+    -fx-highlight-fill: rgba(255,70,85,0.40); -fx-highlight-text-fill: #ffffff;
+    -fx-padding: 10 14 10 14;
+}
+.text-field:hover, .password-field:hover, .text-area:hover,
+.store-field:hover, .search-field:hover {
+    -fx-background-color: rgba(255,255,255,0.13), rgba(0,0,0,0.46);
+    -fx-background-insets: 0, 1; -fx-border-color: transparent;
+}
+.text-field:focused, .password-field:focused, .text-area:focused,
+.store-field:focused, .search-field:focus-within {
+    -fx-background-color: rgba(255,70,85,0.30), rgba(0,0,0,0.46);
+    -fx-background-insets: 0, 1; -fx-border-color: transparent;
+}
+.text-field:disabled, .password-field:disabled, .store-field:disabled { -fx-opacity: 0.45; }
+.text-field.search-field-input,
+.text-field.search-field-input:hover,
+.text-field.search-field-input:focused {
+    -fx-background-color: transparent; -fx-background-insets: 0;
+    -fx-border-color: transparent; -fx-padding: 4 2 4 2;
+}
+.search-field { -fx-padding: 0 12 0 12; }
+.text-area .content { -fx-background-color: transparent; }
+
+/* Combo-boxes */
+.combo-box, .play-select, .home-version-select {
+    -fx-font-family: "Barlow";
+    -fx-background-color: rgba(255,255,255,0.07), rgba(0,0,0,0.50);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0; -fx-cursor: hand;
+}
+.combo-box:hover, .play-select:hover, .home-version-select:hover {
+    -fx-background-color: rgba(255,255,255,0.13), rgba(0,0,0,0.46);
+    -fx-background-insets: 0, 1; -fx-border-color: transparent;
+}
+.combo-box:focused, .play-select:focused, .home-version-select:focused {
+    -fx-background-color: rgba(255,70,85,0.30), rgba(0,0,0,0.46);
+    -fx-background-insets: 0, 1; -fx-border-color: transparent;
+}
+.combo-box > .arrow-button > .arrow,
+.play-select .arrow, .home-version-select .arrow { -fx-background-color: -av-accent; }
+.combo-box .list-cell, .play-select .list-cell,
+.home-version-select .list-cell { -fx-background-color: transparent; -fx-text-fill: -av-text; }
+
+/* Popup list */
+.combo-box-popup > .list-view, .context-menu {
+    -fx-background-color:
+        rgba(255,70,85,0.20),
+        linear-gradient(to bottom, rgba(10,18,30,0.99), rgba(6,12,20,0.99));
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-padding: 3;
+}
+.list-cell:filled:hover, .menu-item:focused {
+    -fx-background-color: rgba(255,255,255,0.10); -fx-text-fill: #ffffff;
+}
+.list-cell:filled:selected, .list-cell:filled:selected:hover {
+    -fx-background-color: rgba(255,70,85,0.22), rgba(255,70,85,0.12);
+    -fx-background-insets: 0, 1; -fx-text-fill: #ffffff;
+}
+
+/* Sliders */
+.slider .track {
+    -fx-background-color: rgba(255,255,255,0.08), rgba(0,0,0,0.55);
+    -fx-background-insets: 0, 2; -fx-background-radius: 0, 0;
+    -fx-pref-height: 8; -fx-padding: 0;
+}
+.slider .thumb {
+    -fx-background-color:
+        rgba(255,255,255,0.28),
+        linear-gradient(to bottom, #ff6070, #c42634);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+    -fx-pref-width: 12; -fx-pref-height: 22; -fx-padding: 0;
+}
+.slider .thumb:hover, .slider:focused .thumb {
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.55), 12, 0.15, 0, 0);
+}
+
+/* Check-boxes / radios */
+.check-box .box, .radio-button .radio {
+    -fx-background-color: rgba(255,255,255,0.07), rgba(0,0,0,0.55);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0; -fx-padding: 5;
+}
+.check-box:selected .box, .radio-button:selected .radio {
+    -fx-background-color: rgba(255,70,85,0.30), rgba(0,0,0,0.46);
+    -fx-background-insets: 0, 1; -fx-border-color: transparent;
+}
+.check-box:selected .mark { -fx-background-color: -mc-xp; }
+.radio-button .dot, .radio-button:selected .dot { -fx-background-color: -av-accent; }
+.check-box, .radio-button { -fx-font-family: "Barlow"; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   9. CHIPS & STATUS BADGES — tactical data-readout style
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-chip, .status-chip, .about-status-pill, .modpack-card-tag, .mod-tag,
+.partner-mode-badge, .about-tag, .account-tag, .auto-chip {
+    -fx-background-color:
+        rgba(255,255,255,0.10),
+        rgba(255,255,255,0.04);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0;
+    -fx-padding: 3 10 3 10; -fx-text-fill: -av-text-dim;
+}
+
+/* Accent chip: red glass badge */
+.av-chip-accent, .recommended-badge, .cape-limited-badge, .update-banner-badge {
+    -fx-background-color:
+        rgba(255,255,255,0.22),
+        linear-gradient(to bottom, #ff6070, #c93a47);
+    -fx-background-insets: 1, 0;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.30), 8, 0.1, 0, 0);
+}
+
+/* XP-green equipped badge */
+.cape-equipped-badge, .avero-badge {
+    -fx-background-color:
+        rgba(255,255,255,0.20),
+        linear-gradient(to bottom, #8df040, #4aaa1c);
+    -fx-background-insets: 1, 0;
+    -fx-text-fill: #04180a; -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(124,242,58,0.25), 8, 0.1, 0, 0);
+}
+
+.play-chip-ok, .store-chip-ok { -fx-text-fill: -mc-xp; }
+.play-chip-err { -fx-text-fill: #ff8a82; }
+.play-chip-warn, .store-chip-warn { -fx-text-fill: #ffc65a; }
+.status-chip-title { -fx-text-fill: -av-text-mute; }
+.status-chip-detail { -fx-font-size: 13px; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   10. PROGRESS — XP bar: thin (6 px), bright lime, no MC textures
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-progress-track, .play-dl-track {
+    -fx-background-color:
+        rgba(255,255,255,0.06),
+        rgba(0,0,0,0.55);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+    -fx-min-height: 6; -fx-pref-height: 6; -fx-max-height: 6;
+}
+.av-progress-fill, .play-dl-fill {
+    -fx-background-color:
+        /* glass highlight */
+        linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.00) 50%),
+        /* XP lime gradient */
+        linear-gradient(to bottom, -mc-xp-hi 0%, -mc-xp 55%, -mc-xp-lo 100%);
+    -fx-background-insets: 0, 0 0 3 0;
+    -fx-background-radius: 0, 0;
+    -fx-background-image: url("../images/tex-xpseg.png");
+    -fx-background-repeat: repeat-x;
+    -fx-background-position: left center;
+}
+.progress-bar > .track {
+    -fx-background-color: rgba(255,255,255,0.06), rgba(0,0,0,0.55);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+}
+.progress-bar > .bar {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.00) 50%),
+        linear-gradient(to bottom, -mc-xp-hi, -mc-xp, -mc-xp-lo);
+    -fx-background-insets: 1 1 1 1, 1 1 4 1;
+    -fx-background-radius: 0, 0; -fx-padding: 3;
+}
+.av-progress-step { -fx-font-family: "Barlow"; }
+.av-progress-pct  { -fx-font-family: "Monocraft"; -fx-font-size: 9px; -fx-text-fill: -mc-xp; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   11. SCROLLBARS — 6 px minimal Valorant style
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.scroll-bar:vertical, .page-scroll .scroll-bar:vertical {
+    -fx-pref-width: 6; -fx-background-color: transparent;
+}
+.scroll-bar:horizontal { -fx-pref-height: 6; -fx-background-color: transparent; }
+.scroll-bar .track, .page-scroll .scroll-bar:vertical .track {
+    -fx-background-color: transparent; -fx-border-color: transparent;
+}
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb,
+.page-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255,70,85,0.25), rgba(255,70,85,0.12);
+    -fx-background-insets: 0, 1; -fx-background-radius: 0, 0;
+}
+.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover,
+.page-scroll .scroll-bar:vertical .thumb:hover,
+.scroll-bar .thumb:pressed {
+    -fx-background-color: rgba(255,70,85,0.55), rgba(255,70,85,0.25);
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.35), 6, 0.1, 0, 0);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   12. TOOLTIP — Valorant intel-box: dark navy + red left bar + glow
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.tooltip {
+    -fx-font-family: "Barlow"; -fx-font-size: 12px; -fx-text-fill: #ece8e1;
+    -fx-background-color:
+        /* red left bar */
+        rgba(255,70,85,0.75),
+        /* glass top */
+        linear-gradient(to bottom, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.00) 2px),
+        /* body */
+        linear-gradient(to bottom right, rgba(8,14,26,0.98), rgba(4,8,16,0.98));
+    -fx-background-insets: 0 0 0 0, 0 0 0 2, 0 0 0 2;
+    -fx-background-radius: 0, 0, 0;
+    -fx-border-color: transparent; -fx-border-width: 0;
+    -fx-padding: 8 14 8 16;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.15), 20, 0, 0, 4);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   13. UPDATE BAR, EMPTY STATES, MISC
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.av-update-bar {
+    -fx-background-color:
+        /* red left bleed */
+        linear-gradient(to right, rgba(255,70,85,0.14) 0%, transparent 55%),
+        /* hairline */
+        rgba(255,70,85,0.30),
+        /* body */
+        linear-gradient(to bottom right, rgba(14,22,36,0.99), rgba(8,14,24,0.99));
+    -fx-background-insets: 0, 0, 1;
+}
+
+.av-skeleton    { -fx-background-color: rgba(236,232,225,0.04); }
+.av-update-skip { -fx-font-family: "Avero Tracked"; -fx-font-size: 10px; }
+
+/* Row separators */
+.news-row, .change-row, .home-row {
+    -fx-border-color: transparent transparent rgba(255,70,85,0.10) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.home-row-mark { -fx-background-color: -av-accent; }
+
+/* XP-green LED */
+.home-led { -fx-background-color: -mc-xp; }
+
+/* Dialogs */
+.dialog-pane {
+    -fx-background-color:
+        rgba(255,70,85,0.15),
+        linear-gradient(to bottom right, rgba(12,20,34,0.99), rgba(6,12,22,0.99));
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0, 0;
+    -fx-background-image: none;
+}
+.dialog-pane > .header-panel { -fx-background-color: transparent; }
+.dialog-pane > .header-panel .label {
+    -fx-font-family: "Avero Display"; -fx-font-size: 22px; -fx-font-weight: bold;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PLAY PAGE POLISH — player card (left), rank card (right), stage atmosphere
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Stage: deeper vignette so the cards and PLAY button read clearly over the art */
+.play-stage-scrim {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(7,13,23,0.20) 0%, rgba(7,13,23,0.38) 50%, rgba(7,13,23,0.92) 100%),
+        linear-gradient(to right, rgba(7,13,23,0.70) 0%, rgba(7,13,23,0.0) 28%, rgba(7,13,23,0.0) 72%, rgba(7,13,23,0.70) 100%);
+}
+.play-stage-art { -fx-opacity: 0.75; }
+
+/* Centre card: softer glass, accent hairline, bigger title */
+.play-card { -fx-padding: 18 24 44 24; }
+.play-eyebrow { -fx-font-size: 11px; -fx-text-fill: -av-accent-hot; }
+.play-title   { -fx-font-size: 34px; }
+.play-hint    { -fx-text-fill: -av-text-mute; }
+.play-fact-val { -fx-font-size: 14px; }
+
+/* PLAY button glow stronger */
+.play-go { -fx-min-width: 300; -fx-pref-width: 300; -fx-min-height: 58; -fx-pref-height: 58; -fx-font-size: 24px; }
+
+/* ── Left: player card ── */
+.play-rail-tile {
+    -fx-background-image: none;
+    -fx-background-color:
+        rgba(255,255,255,0.12),
+        linear-gradient(to bottom, rgba(255,70,85,0.20) 0%, rgba(255,70,85,0.00) 46%),
+        linear-gradient(160deg, rgba(20,34,54,0.98) 0%, rgba(8,15,26,0.98) 100%);
+    -fx-background-insets: 0, 1, 1;
+    -fx-min-height: 0; -fx-pref-height: -1; -fx-max-height: -1;
+    -fx-padding: 0;
+}
+.play-rail-tile:hover {
+    -fx-background-color:
+        rgba(255,255,255,0.26),
+        linear-gradient(to bottom, rgba(255,70,85,0.30) 0%, rgba(255,70,85,0.00) 50%),
+        linear-gradient(160deg, rgba(24,40,64,0.99) 0%, rgba(10,18,30,0.99) 100%);
+}
+.root:kbd .play-rail-tile:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+.play-avatar {
+    -fx-background-color: -av-accent, rgba(0,0,0,0.55);
+    -fx-background-insets: 0, 2;
+    -fx-effect: dropshadow(gaussian, rgba(255,70,85,0.45), 16, 0.15, 0, 0);
+}
+.play-avatar-initial { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 40px; -fx-text-fill: -av-text; }
+.play-avatar-name { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: -av-text; }
+.play-avatar-kind { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 9px; -fx-text-fill: -av-text-mute; }
+.play-rail-strip  { -fx-padding: 10 12 10 12; -fx-background-color: rgba(0,0,0,0.30); -fx-border-color: rgba(236,232,225,0.09) transparent transparent transparent; -fx-border-width: 1 0 0 0; }
+.play-rail-mode   { -fx-font-size: 15px; }
+
+/* ── Right: rank card ── */
+.play-rank {
+    -fx-background-color:
+        rgba(255,255,255,0.12),
+        linear-gradient(to bottom, rgba(143,208,255,0.16) 0%, rgba(143,208,255,0.00) 42%),
+        linear-gradient(160deg, rgba(20,34,54,0.98) 0%, rgba(8,15,26,0.98) 100%);
+    -fx-background-insets: 0, 1, 1;
+    -fx-padding: 14 16 16 16;
+}
+.play-rank:hover {
+    -fx-background-color:
+        rgba(255,255,255,0.26),
+        linear-gradient(to bottom, rgba(143,208,255,0.26) 0%, rgba(143,208,255,0.00) 48%),
+        linear-gradient(160deg, rgba(24,40,64,0.99) 0%, rgba(10,18,30,0.99) 100%);
+}
+.root:kbd .play-rank:focused { -fx-border-color: -av-text; -fx-border-width: 1; -fx-border-insets: -2; }
+.play-rank-name { -fx-font-family: "Avero Display"; -fx-font-weight: bold; -fx-font-size: 22px; }
+.play-rank-ap   { -fx-font-family: "Avero Tracked"; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: -av-text-dim; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EVERY BUTTON = THE PLAY BUTTON (loaded last, so it wins over every older rule).
+   Push buttons get the full glossy gold→red look. Toggle/tab buttons wear the same look
+   dimmed until hovered or selected, so you can still tell which one is on.
+   Left alone on purpose: the sidebar nav toggles and combo boxes.
+   ══════════════════════════════════════════════════════════════════════════ */
+.button,
+.av-btn,
+.av-btn-ghost,
+.secondary-button,
+.play-row-btn,
+.av-lb-limit-btn,
+.play-rail-btn,
+.play-filter,
+.play-tab-button,
+.type-tab-button,
+.source-toggle-button,
+.store-switch,
+.av-tab {
+    -fx-font-family: "Avero Display"; -fx-font-weight: bold;
+    -fx-text-fill: #ffffff; -fx-cursor: hand; -fx-opacity: 1;
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.06) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffb43a 0%, #ff7a1f 32%, #ff4a2c 62%, #d9232f 100%);
+    -fx-background-insets: 1, 0;
+    -fx-background-radius: 14, 14;
+    -fx-border-color: rgba(255,196,110,0.55); -fx-border-width: 1.5; -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.45), 18, 0.15, 0, 3);
+}
+.play-rail-btn,
+.play-filter,
+.play-tab-button,
+.type-tab-button,
+.source-toggle-button,
+.store-switch,
+.av-tab {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, rgba(255,180,58,0.42) 0%, rgba(255,122,31,0.38) 32%, rgba(255,74,44,0.36) 62%, rgba(217,35,47,0.40) 100%);
+    -fx-border-color: rgba(255,196,110,0.28);
+    -fx-text-fill: rgba(255,255,255,0.80);
+    -fx-effect: none;
+}
+.button:hover,
+.av-btn:hover,
+.av-btn-ghost:hover,
+.secondary-button:hover,
+.play-row-btn:hover,
+.av-lb-limit-btn:hover,
+.play-rail-btn:hover,
+.play-filter:hover,
+.play-tab-button:hover,
+.type-tab-button:hover,
+.source-toggle-button:hover,
+.store-switch:hover,
+.av-tab:hover {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.46) 0%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffc761 0%, #ff9640 32%, #ff6c4c 62%, #e8414a 100%);
+    -fx-border-color: rgba(255,210,140,0.75); -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(255,138,61,0.70), 26, 0.25, 0, 5);
+}
+.button:armed,
+.av-btn:armed,
+.av-btn-ghost:armed,
+.secondary-button:armed,
+.play-row-btn:armed,
+.av-lb-limit-btn:armed,
+.play-rail-btn:armed,
+.play-filter:armed,
+.play-tab-button:armed,
+.type-tab-button:armed,
+.source-toggle-button:armed,
+.store-switch:armed,
+.av-tab:armed {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(0,0,0,0.14), rgba(0,0,0,0.00) 60%),
+        linear-gradient(to right, #d8902e 0%, #d8582c 40%, #c42c38 100%);
+    -fx-border-color: rgba(255,180,100,0.45); -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.25), 8, 0.08, 0, 1);
+}
+.play-rail-btn:selected,
+.play-filter:selected,
+.play-tab-button:selected,
+.type-tab-button:selected,
+.source-toggle-button:selected,
+.store-switch:selected,
+.av-tab:selected {
+    -fx-background-color:
+        linear-gradient(to bottom, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.06) 42%, rgba(255,255,255,0.00) 70%),
+        linear-gradient(to right, #ffb43a 0%, #ff7a1f 32%, #ff4a2c 62%, #d9232f 100%);
+    -fx-border-color: rgba(255,214,150,0.80); -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.55), 22, 0.2, 0, 4);
+}
+.button:disabled,
+.av-btn:disabled,
+.av-btn-ghost:disabled,
+.secondary-button:disabled,
+.play-row-btn:disabled,
+.av-lb-limit-btn:disabled,
+.play-rail-btn:disabled,
+.play-filter:disabled,
+.play-tab-button:disabled,
+.type-tab-button:disabled,
+.source-toggle-button:disabled,
+.store-switch:disabled,
+.av-tab:disabled {
+    -fx-background-color: linear-gradient(to right, rgba(255,180,58,0.26), rgba(217,35,47,0.22));
+    -fx-background-insets: 0;
+    -fx-border-color: rgba(255,180,100,0.20);
+    -fx-text-fill: rgba(255,255,255,0.40); -fx-effect: none; -fx-cursor: default;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PLAY PAGE — centred composition: card + PLAY on one centre line, warm spotlight, deeper stage
+   ══════════════════════════════════════════════════════════════════════════ */
+.play-stage-content { -fx-padding: 30 28 40 28; }
+.play-stage-scrim {
+    -fx-background-color:
+        radial-gradient(center 50% 38%, radius 55%, rgba(255,122,61,0.16) 0%, rgba(255,122,61,0.00) 100%),
+        linear-gradient(to bottom, rgba(7,13,23,0.20) 0%, rgba(7,13,23,0.40) 50%, rgba(7,13,23,0.94) 100%),
+        linear-gradient(to right, rgba(7,13,23,0.78) 0%, rgba(7,13,23,0.0) 26%, rgba(7,13,23,0.0) 74%, rgba(7,13,23,0.78) 100%);
+}
+.play-spot { -fx-background-color: radial-gradient(center 50% 45%, radius 50%, rgba(255,150,64,0.22) 0%, rgba(255,150,64,0.00) 100%); }
+.play-card {
+    -fx-background-color:
+        linear-gradient(to right, #ffb43a 0%, #ff7a1f 32%, #ff4a2c 62%, #d9232f 100%),
+        linear-gradient(to bottom, rgba(255,150,64,0.20) 0%, rgba(255,150,64,0.00) 8px),
+        linear-gradient(to bottom, rgba(18,28,46,0.97), rgba(8,14,24,0.98));
+    -fx-background-insets: 0, 3 0 0 0, 3 0 0 0;
+    -fx-padding: 22 28 46 28;
+}
+.play-eyebrow { -fx-text-fill: #ffb43a; -fx-font-size: 11px; }
+.play-title   { -fx-font-size: 36px; -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.35), 14, 0.1, 0, 0); }
+.play-go      { -fx-min-width: 320; -fx-pref-width: 320; -fx-min-height: 62; -fx-pref-height: 62; -fx-font-size: 26px; -fx-padding: 0; }
+.play-go-glow { -fx-background-color: radial-gradient(center 50% 50%, radius 60%, rgba(255,122,61,0.70) 0%, rgba(255,122,61,0.00) 100%); }
+.play-side:hover { -fx-background-color: rgba(255,170,100,0.55), -av-bg-3; }
+
+/* Keep the big PLAY button big: it also matches .button above, so restate its own size/radius/glow last. */
+.av-btn-play, .av-btn-play:hover, .av-btn-play:armed { -fx-background-insets: 2, 0; -fx-background-radius: 18, 18; -fx-border-radius: 18; -fx-border-width: 2; }
+.av-btn-play         { -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.55), 32, 0.22, 0, 6); }
+.av-btn-play:hover   { -fx-effect: dropshadow(gaussian, rgba(255,138,61,0.80), 40, 0.30, 0, 8); }
+.av-btn-play:armed   { -fx-effect: dropshadow(gaussian, rgba(255,122,61,0.25), 10, 0.08, 0, 2); }
+.av-btn-play:disabled { -fx-background-insets: 0; -fx-effect: none; }
+
+/* Keyboard focus: the old square white ring (border-insets -2, no radius) drew a hard rectangle around the
+   rounded buttons. Same ring idea, but it hugs the button's own rounded outline in warm gold instead. */
+.root:kbd .button:focused,
+.root:kbd .av-btn:focused,
+.root:kbd .av-btn-ghost:focused,
+.root:kbd .secondary-button:focused,
+.root:kbd .play-row-btn:focused,
+.root:kbd .av-lb-limit-btn:focused,
+.root:kbd .play-rail-btn:focused,
+.root:kbd .play-filter:focused,
+.root:kbd .play-tab-button:focused,
+.root:kbd .type-tab-button:focused,
+.root:kbd .source-toggle-button:focused,
+.root:kbd .store-switch:focused,
+.root:kbd .av-tab:focused {
+    -fx-border-color: rgba(255,226,170,0.95); -fx-border-width: 1.5; -fx-border-insets: 0; -fx-border-radius: 14;
+}
+.root:kbd .av-btn-play:focused {
+    -fx-border-color: rgba(255,226,170,0.95); -fx-border-width: 2; -fx-border-insets: 0; -fx-border-radius: 18;
+}
+
+/* Shape lock: older per-state rules (e.g. `.type-tab-button:selected`) set square radii and a third
+   background layer, which bled a coloured rectangle outside the rounded button. Restate the shape in
+   every state, after all of them, so only the button itself carries colour. */
+.button:hover,
+.av-btn:hover,
+.av-btn-ghost:hover,
+.secondary-button:hover,
+.play-row-btn:hover,
+.av-lb-limit-btn:hover,
+.play-rail-btn:hover,
+.play-filter:hover,
+.play-tab-button:hover,
+.type-tab-button:hover,
+.source-toggle-button:hover,
+.store-switch:hover,
+.av-tab:hover,
+.button:armed,
+.av-btn:armed,
+.av-btn-ghost:armed,
+.secondary-button:armed,
+.play-row-btn:armed,
+.av-lb-limit-btn:armed,
+.play-rail-btn:armed,
+.play-filter:armed,
+.play-tab-button:armed,
+.type-tab-button:armed,
+.source-toggle-button:armed,
+.store-switch:armed,
+.av-tab:armed,
+.play-rail-btn:selected,
+.play-filter:selected,
+.play-tab-button:selected,
+.type-tab-button:selected,
+.source-toggle-button:selected,
+.store-switch:selected,
+.av-tab:selected {
+    -fx-background-insets: 1, 0; -fx-background-radius: 14, 14;
+    -fx-border-width: 1.5; -fx-border-radius: 14; -fx-border-insets: 0;
+}
+.button:disabled,
+.av-btn:disabled,
+.av-btn-ghost:disabled,
+.secondary-button:disabled,
+.play-row-btn:disabled,
+.av-lb-limit-btn:disabled,
+.play-rail-btn:disabled,
+.play-filter:disabled,
+.play-tab-button:disabled,
+.type-tab-button:disabled,
+.source-toggle-button:disabled,
+.store-switch:disabled,
+.av-tab:disabled {
+    -fx-background-insets: 0; -fx-background-radius: 14; -fx-border-width: 1.5; -fx-border-radius: 14; -fx-border-insets: 0;
+}
+.play-tab-bar, .content-type-tabs, .source-toggle-bar, .mods-toolbar { -fx-background-radius: 0; }
